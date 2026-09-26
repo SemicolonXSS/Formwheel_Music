@@ -2,37 +2,25 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Formwheel_Music</title>
 
 <style>
-*{
-  box-sizing:border-box;
-  margin:0;
-  padding:0;
-}
+*{box-sizing:border-box}
 
 body{
+  margin:0;
   font-family:Arial,"Noto Sans KR",sans-serif;
   background:#f7f8fc;
   color:#202124;
-  min-height:100vh;
 }
 
-button,
-select,
-input{
-  font:inherit;
-}
-
-button{
-  cursor:pointer;
-  border:0;
-}
+button,input,select{font:inherit}
+button{cursor:pointer}
 
 header{
   height:64px;
-  background:white;
+  background:#fff;
   border-bottom:1px solid #e5e7eb;
   display:flex;
   align-items:center;
@@ -43,125 +31,111 @@ header{
 }
 
 .logo{
+  color:#202124;
+  text-decoration:none;
   font-size:21px;
   font-weight:800;
-  text-decoration:none;
-  color:#202124;
-}
-
-.logo span{
-  display:inline-block;
-  margin:0 3px;
 }
 
 nav{
   margin-left:auto;
   display:flex;
-  gap:8px;
+  gap:5px;
 }
 
 .nav-btn{
+  border:0;
   background:transparent;
-  padding:9px 13px;
+  padding:9px 12px;
   border-radius:9px;
   color:#555;
 }
 
 .nav-btn:hover{
-  background:#f1f3f5;
+  background:#f0f2f5;
+}
+
+.firebase-status{
+  margin-left:14px;
+  padding:6px 10px;
+  border-radius:20px;
+  font-size:11px;
+  white-space:nowrap;
+}
+
+.firebase-status.wait{
+  background:#fff4d6;
+  color:#8a6200;
+}
+
+.firebase-status.ok{
+  background:#e3f7e9;
+  color:#17863a;
+}
+
+.firebase-status.error{
+  background:#ffe5e5;
+  color:#c62828;
 }
 
 main{
   max-width:1400px;
-  margin:0 auto;
-  padding:30px 20px 60px;
+  margin:auto;
+  padding:30px 20px 70px;
 }
 
-.screen{
-  display:none;
-}
-
-.screen.active{
-  display:block;
-}
+.screen{display:none}
+.screen.active{display:block}
 
 .hero{
   text-align:center;
-  padding:45px 20px 30px;
+  padding:55px 20px 35px;
 }
 
 .hero h1{
   font-size:42px;
-  margin-bottom:12px;
+  margin:0 0 12px;
 }
 
-.hero p{
-  color:#6b7280;
-}
+.hero p{color:#777}
 
 .menu-grid{
   display:grid;
   grid-template-columns:repeat(3,1fr);
   gap:20px;
-  margin-top:35px;
 }
 
 .menu-card{
-  background:white;
+  background:#fff;
   border:1px solid #e5e7eb;
   border-radius:20px;
-  padding:35px 25px;
+  padding:30px;
   min-height:220px;
   transition:.2s;
 }
 
 .menu-card:hover{
-  transform:translateY(-4px);
-  box-shadow:0 10px 30px rgba(0,0,0,.07);
+  transform:translateY(-3px);
+  box-shadow:0 12px 30px rgba(0,0,0,.06);
 }
 
 .menu-icon{
   font-size:42px;
-  margin-bottom:18px;
+  margin-bottom:15px;
 }
 
 .menu-card h2{
-  margin-bottom:10px;
+  margin:0 0 10px;
 }
 
 .menu-card p{
   color:#777;
   line-height:1.6;
-  margin-bottom:20px;
-}
-
-.primary{
-  background:#202124;
-  color:white;
-  padding:11px 18px;
-  border-radius:10px;
-}
-
-.secondary{
-  background:#eef0f4;
-  color:#333;
-  padding:10px 16px;
-  border-radius:10px;
-}
-
-.danger{
-  background:#ffe7e7;
-  color:#c62828;
-  padding:10px 16px;
-  border-radius:10px;
-}
-
-.back-btn{
-  margin-bottom:18px;
+  min-height:70px;
 }
 
 .panel{
-  background:white;
+  background:#fff;
   border:1px solid #e5e7eb;
   border-radius:18px;
   padding:20px;
@@ -170,13 +144,41 @@ main{
 
 .panel-title{
   display:flex;
-  justify-content:space-between;
   align-items:center;
+  justify-content:space-between;
+  gap:12px;
   margin-bottom:16px;
 }
 
 .panel-title h2{
-  font-size:20px;
+  margin:0;
+}
+
+.primary,
+.secondary,
+.danger{
+  border:0;
+  border-radius:9px;
+  padding:10px 15px;
+}
+
+.primary{
+  background:#202124;
+  color:white;
+}
+
+.secondary{
+  background:#edf0f4;
+  color:#333;
+}
+
+.danger{
+  background:#ffe5e5;
+  color:#c62828;
+}
+
+.back-btn{
+  margin-bottom:18px;
 }
 
 .form-grid{
@@ -188,7 +190,7 @@ main{
 .field{
   display:flex;
   flex-direction:column;
-  gap:7px;
+  gap:6px;
 }
 
 .field label{
@@ -199,81 +201,82 @@ main{
 .field input,
 .field select{
   height:42px;
-  border:1px solid #d8dce3;
+  border:1px solid #d7dbe2;
   border-radius:9px;
-  padding:0 11px;
-  background:white;
+  padding:0 10px;
+  background:#fff;
 }
 
 .toolbar{
   display:flex;
   flex-wrap:wrap;
   gap:8px;
-  margin-top:15px;
+  margin-top:14px;
 }
 
 .info{
-  background:#f4f6fa;
+  background:#f3f5f8;
   padding:11px 14px;
-  border-radius:10px;
+  border-radius:9px;
+  margin-top:13px;
+  font-size:13px;
   color:#555;
-  font-size:14px;
-  margin-top:12px;
 }
 
-/* piano */
+/* =========================
+   EDITOR PIANO
+========================= */
 
-.piano-wrap{
+.piano-scroll{
   overflow-x:auto;
-  padding-bottom:8px;
 }
 
 .piano{
-  position:relative;
+  min-width:1100px;
   height:190px;
-  min-width:1080px;
+  position:relative;
   display:flex;
-  background:#222;
-  border-radius:12px;
+  background:#111;
   padding:4px;
+  border-radius:12px;
 }
 
 .white-key{
   flex:1;
   height:182px;
-  background:white;
-  border:1px solid #cfd3da;
+  background:#fff;
+  border:1px solid #ccc;
   border-radius:0 0 7px 7px;
   display:flex;
   align-items:flex-end;
   justify-content:center;
-  padding-bottom:10px;
-  color:#444;
+  padding-bottom:8px;
   position:relative;
   user-select:none;
 }
 
-.white-key.selected{
-  background:#dfe8ff;
+.white-key:hover{
+  background:#f0f2ff;
 }
 
-.white-key:hover{
-  background:#f1f5ff;
+.white-key.selected{
+  background:#cbd3ff;
 }
 
 .black-key{
   position:absolute;
+  top:4px;
   width:28px;
-  height:110px;
-  background:#181818;
+  height:108px;
+  background:#151515;
   color:white;
-  border-radius:0 0 5px 5px;
   z-index:5;
+  border-radius:0 0 5px 5px;
   display:flex;
-  align-items:flex-end;
   justify-content:center;
-  padding-bottom:7px;
-  font-size:10px;
+  align-items:flex-end;
+  padding-bottom:5px;
+  font-size:9px;
   user-select:none;
 }
 
@@ -281,76 +284,71 @@ main{
   background:#536dfe;
 }
 
+/* =========================
+   TIMELINE
+========================= */
+
 .timeline-wrap{
-  margin-top:20px;
+  height:360px;
   overflow:auto;
   background:#101217;
-  border-radius:14px;
-  height:360px;
-  position:relative;
+  border-radius:13px;
 }
 
 .timeline{
-  position:relative;
-  min-width:1100px;
+  min-width:1200px;
   height:100%;
+  position:relative;
 }
 
 .timeline-grid{
   position:absolute;
   inset:0;
   background-image:
-    linear-gradient(to right,rgba(255,255,255,.08) 1px,transparent 1px),
-    linear-gradient(to bottom,rgba(255,255,255,.05) 1px,transparent 1px);
+    linear-gradient(to right,rgba(255,255,255,.07) 1px,transparent 1px),
+    linear-gradient(to bottom,rgba(255,255,255,.04) 1px,transparent 1px);
   background-size:55px 40px;
 }
 
 .note-block{
   position:absolute;
-  height:28px;
-  border-radius:6px;
+  height:25px;
+  border-radius:5px;
   background:#6c63ff;
   color:white;
+  padding:4px 7px;
   font-size:11px;
-  padding:5px 8px;
   overflow:hidden;
   white-space:nowrap;
 }
 
 .note-block.chord{
-  background:#ff6584;
+  background:#ff6685;
 }
 
 .note-list{
   display:flex;
   flex-direction:column;
   gap:6px;
+  margin-top:14px;
   max-height:230px;
   overflow:auto;
-  margin-top:15px;
 }
 
 .note-row{
   display:flex;
   align-items:center;
   justify-content:space-between;
-  background:#f5f6f8;
+  gap:10px;
+  background:#f4f5f7;
   border-radius:8px;
   padding:8px 10px;
   font-size:13px;
 }
 
-.note-actions{
-  display:flex;
-  gap:5px;
-}
-
-.small-btn{
-  padding:5px 8px;
-  border-radius:6px;
-  background:#e8eaf0;
-  font-size:12px;
-}
+/* =========================
+   SONG
+========================= */
 
 .song-grid{
   display:grid;
@@ -359,14 +357,14 @@ main{
 }
 
 .song-card{
-  background:white;
-  border:1px solid #e4e6eb;
+  background:#fff;
+  border:1px solid #e1e4e9;
   border-radius:14px;
-  padding:18px;
+  padding:17px;
 }
 
 .song-card h3{
-  margin-bottom:8px;
+  margin:0 0 8px;
 }
 
 .song-meta{
@@ -375,34 +373,41 @@ main{
   line-height:1.7;
 }
 
-.song-card .toolbar{
-  margin-top:12px;
+.empty{
+  text-align:center;
+  padding:40px 15px;
+  color:#888;
 }
 
-/* falling player */
+.hidden{
+  display:none!important;
+}
+
+/* =========================
+   FALLING PLAYER
+========================= */
 
 .player{
   background:#080a0f;
-  border-radius:18px;
-  overflow:hidden;
   color:white;
+  border-radius:16px;
+  overflow:hidden;
 }
 
 .player-top{
-  padding:15px 18px;
+  height:54px;
+  padding:0 16px;
   display:flex;
-  justify-content:space-between;
   align-items:center;
+  justify-content:space-between;
   background:#11141b;
 }
 
 .player-stage{
-  height:520px;
+  height:540px;
   position:relative;
   overflow:hidden;
-  background:
-    linear-gradient(to bottom,rgba(255,255,255,.025),rgba(255,255,255,.01)),
-    #080a0f;
+  background:#080a0f;
 }
 
 .falling-lanes{
@@ -414,80 +419,91 @@ main{
 
 .lane{
   flex:1;
-  border-right:1px solid rgba(255,255,255,.055);
+  border-right:1px solid rgba(255,255,255,.045);
+}
+
+.notes-layer{
+  position:absolute;
+  inset:0;
+  overflow:hidden;
+  pointer-events:none;
+  z-index:20;
 }
 
 .hit-line{
   position:absolute;
   left:0;
   right:0;
-  bottom:80px;
+  bottom:82px;
   height:3px;
-  background:#ffffff;
-  opacity:.8;
-  z-index:20;
+  background:#fff;
+  z-index:40;
 }
 
 .falling-note{
   position:absolute;
-  border-radius:6px;
+  border-radius:5px;
   background:#6c63ff;
-  box-shadow:0 0 12px rgba(108,99,255,.5);
-  z-index:10;
+  box-shadow:0 0 13px rgba(108,99,255,.6);
 }
 
 .falling-note.chord{
-  background:#ff6584;
-  box-shadow:0 0 12px rgba(255,101,132,.5);
+  background:#ff6685;
+  box-shadow:0 0 13px rgba(255,102,133,.6);
 }
 
 .player-piano{
   position:absolute;
-  bottom:0;
   left:0;
   right:0;
-  height:80px;
+  bottom:0;
+  height:82px;
   display:flex;
-  background:#171a21;
-  z-index:30;
+  background:#171920;
+  z-index:50;
 }
 
 .player-key{
   flex:1;
-  border-right:1px solid #aaa;
-  background:white;
+  min-width:0;
+  background:#fff;
   color:#333;
-  font-size:9px;
+  border-right:1px solid #bbb;
   display:flex;
-  justify-content:center;
   align-items:flex-end;
-  padding-bottom:5px;
+  justify-content:center;
+  padding-bottom:4px;
+  font-size:7px;
+  user-select:none;
 }
 
 .player-key.black{
-  background:#171717;
-  color:white;
-  height:52px;
-  align-self:flex-start;
-  margin-left:-1.2%;
-  margin-right:-1.2%;
-  z-index:3;
+  background:#151515;
+  color:#fff;
+  height:55px;
+  margin-left:-.65%;
+  margin-right:-.65%;
+  z-index:5;
   border:0;
 }
 
 .player-key.active{
-  background:#aab7ff;
+  background:#aab6ff;
 }
 
 .player-key.black.active{
   background:#536dfe;
 }
 
+/* =========================
+   GAME
+========================= */
+
 .game-info{
   display:flex;
   justify-content:center;
-  gap:30px;
-  padding:14px;
+  gap:50px;
+  padding:13px;
   background:#11141b;
 }
 
@@ -497,7 +513,7 @@ main{
 
 .stat small{
   display:block;
-  color:#9aa0aa;
+  color:#9298a3;
   font-size:11px;
 }
 
@@ -505,47 +521,39 @@ main{
   font-size:22px;
 }
 
-.game-controls{
-  display:flex;
-  justify-content:center;
-  gap:8px;
-  padding:12px;
-  background:#11141b;
-}
-
-.result{
+.judge{
   position:absolute;
   left:50%;
   top:40%;
   transform:translate(-50%,-50%);
-  font-size:40px;
+  font-size:42px;
   font-weight:900;
+  z-index:100;
   opacity:0;
   pointer-events:none;
-  z-index:100;
 }
 
-.result.show{
-  animation:judge .5s ease;
+.judge.show{
+  animation:judgeAnim .55s ease;
 }
 
-@keyframes judge{
-  0%{opacity:0;transform:translate(-50%,-50%) scale(.6)}
-  40%{opacity:1;transform:translate(-50%,-50%) scale(1.15)}
-  100%{opacity:0;transform:translate(-50%,-70%) scale(1)}
-}
-
-.hidden{
-  display:none!important;
-}
-
-.empty{
-  text-align:center;
-  color:#888;
-  padding:45px 20px;
+@keyframes judgeAnim{
+  0%{
+    opacity:0;
+    transform:translate(-50%,-50%) scale(.6);
+  }
+  35%{
+    opacity:1;
+    transform:translate(-50%,-50%) scale(1.12);
+  }
+  100%{
+    opacity:0;
+    transform:translate(-50%,-70%) scale(1);
+  }
 }
 
 @media(max-width:900px){
+
   .menu-grid{
     grid-template-columns:1fr;
   }
@@ -553,16 +561,14 @@ main{
   .form-grid{
     grid-template-columns:1fr 1fr;
   }
-}
-
-@media(max-width:550px){
-  header{
-    padding:0 12px;
-  }
 
   nav{
     display:none;
   }
+
+}
+
+@media(max-width:550px){
 
   .form-grid{
     grid-template-columns:1fr;
@@ -571,6 +577,7 @@ main{
   .hero h1{
     font-size:32px;
   }
+
 }
 </style>
 </head>
@@ -578,384 +585,760 @@ main{
 <body>
 
 <header>
-  <a class="logo" href="https://semicolonxss.github.io/Formwheel/">
-    Form<span>🎵</span>Wheel
-  </a>
 
-  <nav>
-    <button class="nav-btn" onclick="showScreen('home')">Home</button>
-    <button class="nav-btn" onclick="showScreen('create')">음악 제작</button>
-    <button class="nav-btn" onclick="showScreen('library')">음악 재생</button>
-    <button class="nav-btn" onclick="showScreen('game')">음악 플레이</button>
-  </nav>
+<a
+  class="logo"
+  href="https://semicolonxss.github.io/Formwheel/"
+>
+  Form<span>🎵</span>Wheel
+</a>
+
+<nav>
+  <button class="nav-btn" onclick="showScreen('home')">
+    Home
+  </button>
+
+  <button class="nav-btn" onclick="showScreen('create')">
+    음악 제작
+  </button>
+
+  <button class="nav-btn" onclick="showScreen('library')">
+    음악 재생
+  </button>
+
+  <button class="nav-btn" onclick="showScreen('game')">
+    음악 플레이
+  </button>
+</nav>
+
+<div
+  id="firebaseStatus"
+  class="firebase-status wait"
+>
+  🔄 Firebase 연결 중...
+</div>
+
 </header>
+
 
 <main>
 
-<!-- HOME -->
-<section id="home" class="screen active">
-  <div class="hero">
-    <h1>Formwheel_Music</h1>
-    <p>음악을 만들고, 듣고, 직접 연주해보세요.</p>
-  </div>
+<!-- =========================
+     HOME
+========================= -->
 
-  <div class="menu-grid">
+<section
+  id="home"
+  class="screen active"
+>
 
-    <div class="menu-card">
-      <div class="menu-icon">🎼</div>
-      <h2>음악 제작</h2>
-      <p>
-        3옥타브 피아노로 음표를 만들고
-        8분음표부터 온음표까지 자유롭게 구성합니다.
-      </p>
-      <button class="primary" onclick="showScreen('create')">
-        음악 제작
-      </button>
-    </div>
+<div class="hero">
+  <h1>Formwheel_Music</h1>
+  <p>
+    음악을 만들고, 듣고, 직접 플레이해보세요.
+  </p>
+</div>
 
-    <div class="menu-card">
-      <div class="menu-icon">▶️</div>
-      <h2>음악 재생</h2>
-      <p>
-        만든 음악을 위에서 아래로 내려오는
-        Synthesia 스타일 화면으로 감상합니다.
-      </p>
-      <button class="primary" onclick="showScreen('library')">
-        음악 재생
-      </button>
-    </div>
+<div class="panel">
 
-    <div class="menu-card">
-      <div class="menu-icon">🎹</div>
-      <h2>음악 플레이</h2>
-      <p>
-        내려오는 음표를 직접 눌러
-        점수와 콤보를 쌓아보세요.
-      </p>
-      <button class="primary" onclick="showScreen('game')">
-        음악 플레이
-      </button>
-    </div>
+<div class="panel-title">
+  <h2>Firebase 상태</h2>
+</div>
 
-  </div>
-</section>
+<div id="firebaseMessage">
+  Firebase 연결을 확인하고 있습니다...
+</div>
+
+</div>
 
 
-<!-- CREATE -->
-<section id="create" class="screen">
+<div class="menu-grid">
 
-  <button class="secondary back-btn" onclick="showScreen('home')">
-    ← 홈
-  </button>
+<div class="menu-card">
 
-  <div class="panel">
-    <div class="panel-title">
-      <h2>🎼 음악 제작</h2>
-    </div>
+<div class="menu-icon">🎼</div>
 
-    <div class="form-grid">
+<h2>음악 제작</h2>
 
-      <div class="field">
-        <label>곡 제목</label>
-        <input id="songTitle" placeholder="나의 음악">
-      </div>
+<p>
+3옥타브 피아노와 여러 음표 길이,
+화음을 이용해서 음악을 만들어보세요.
+</p>
 
-      <div class="field">
-        <label>악기</label>
-        <select id="instrument">
-          <option value="piano">🎹 피아노</option>
-          <option value="violin">🎻 바이올린</option>
-          <option value="guitar">🎸 기타</option>
-          <option value="drum">🥁 드럼</option>
-        </select>
-      </div>
+<button
+  class="primary"
+  onclick="showScreen('create')"
+>
+음악 제작
+</button>
 
-      <div class="field">
-        <label>손 모드</label>
-        <select id="handMode">
-          <option value="one">한 손</option>
-          <option value="two">두 손</option>
-          <option value="four">포 핸드</option>
-        </select>
-      </div>
-
-      <div class="field">
-        <label>BPM</label>
-        <input id="tempo" type="number" min="30" max="300" value="120">
-      </div>
-
-    </div>
-
-    <div class="form-grid" style="margin-top:12px">
-
-      <div class="field">
-        <label>현재 박자</label>
-        <input id="startBeat" type="number" min="0" step="0.5" value="0">
-      </div>
-
-      <div class="field">
-        <label>음표 길이</label>
-        <select id="duration">
-          <option value="0.5">8분음표</option>
-          <option value="1" selected>4분음표</option>
-          <option value="1.5">점4분음표</option>
-          <option value="2">2분음표</option>
-          <option value="4">온음표</option>
-        </select>
-      </div>
-
-      <div class="field">
-        <label>선택한 음</label>
-        <input id="selectedNotes" readonly value="없음">
-      </div>
-
-      <div class="field">
-        <label>추가 방식</label>
-        <select id="advanceMode">
-          <option value="none">박자 그대로</option>
-          <option value="duration">음표 길이만큼 이동</option>
-        </select>
-      </div>
-
-    </div>
-
-    <div class="toolbar">
-      <button class="primary" onclick="addSelectedNotes()">
-        🎵 선택 음 추가
-      </button>
-
-      <button class="secondary" onclick="clearSelectedKeys()">
-        선택 해제
-      </button>
-
-      <button class="secondary" onclick="undoLast()">
-        ↩️ 되돌리기
-      </button>
-
-      <button class="danger" onclick="clearComposition()">
-        전체 삭제
-      </button>
-
-      <button class="secondary" onclick="exportSong()">
-        JSON 내보내기
-      </button>
-
-      <label class="secondary" style="display:inline-flex;align-items:center;cursor:pointer">
-        JSON 가져오기
-        <input id="importFile" type="file" accept=".json" hidden onchange="importSong(event)">
-      </label>
-
-      <button class="primary" onclick="saveCurrentSong()">
-        💾 Firebase 저장
-      </button>
-    </div>
-
-    <div class="info">
-      피아노에서 음을 여러 개 선택한 뒤 <b>「선택 음 추가」</b>를 누르면
-      같은 박자에 들어가 화음이 됩니다.
-    </div>
-  </div>
+</div>
 
 
-  <div class="panel">
-    <div class="panel-title">
-      <h2>🎹 3옥타브 피아노</h2>
-      <span id="octaveInfo">C3 ~ B5 · 36음</span>
-    </div>
+<div class="menu-card">
 
-    <div class="piano-wrap">
-      <div id="editorPiano" class="piano"></div>
-    </div>
-  </div>
+<div class="menu-icon">▶️</div>
+
+<h2>음악 재생</h2>
+
+<p>
+만든 음악을 Synthesia 스타일의
+내려오는 음표로 감상합니다.
+</p>
+
+<button
+  class="primary"
+  onclick="showScreen('library')"
+>
+음악 재생
+</button>
+
+</div>
 
 
-  <div class="panel">
-    <div class="panel-title">
-      <h2>🎼 악보 / 타임라인</h2>
-      <span id="noteCount">0개 음표</span>
-    </div>
+<div class="menu-card">
 
-    <div id="timelineWrap" class="timeline-wrap">
-      <div id="timeline" class="timeline">
-        <div class="timeline-grid"></div>
-      </div>
-    </div>
+<div class="menu-icon">🎮</div>
 
-    <div id="noteList" class="note-list"></div>
-  </div>
+<h2>음악 플레이</h2>
+
+<p>
+내려오는 음표를 직접 눌러
+점수와 콤보를 만들어보세요.
+</p>
+
+<button
+  class="primary"
+  onclick="showScreen('game')"
+>
+음악 플레이
+</button>
+
+</div>
+
+</div>
 
 </section>
 
 
-<!-- LIBRARY -->
-<section id="library" class="screen">
+<!-- =========================
+     CREATE
+========================= -->
 
-  <button class="secondary back-btn" onclick="showScreen('home')">
-    ← 홈
-  </button>
+<section
+  id="create"
+  class="screen"
+>
 
-  <div class="panel">
-    <div class="panel-title">
-      <div>
-        <h2>▶️ 음악 재생</h2>
-        <p style="color:#777;margin-top:5px">
-          음악을 감상하는 모드입니다. 게임처럼 점수를 얻지는 않습니다.
-        </p>
-      </div>
+<button
+  class="secondary back-btn"
+  onclick="showScreen('home')"
+>
+← 홈
+</button>
 
-      <button class="secondary" onclick="loadSongs()">
-        🔄 새로고침
-      </button>
-    </div>
 
-    <div id="songGrid" class="song-grid"></div>
-  </div>
+<div class="panel">
 
-  <div id="playbackPanel" class="panel hidden">
+<div class="panel-title">
+<h2>🎼 음악 제작</h2>
+</div>
 
-    <div class="panel-title">
-      <h2 id="playTitle">재생</h2>
-      <button class="danger" onclick="stopPlayback()">
-        ⏹ 정지
-      </button>
-    </div>
 
-    <div class="player">
+<div class="form-grid">
 
-      <div class="player-top">
-        <span id="playInstrument">🎹 Piano</span>
-        <span id="playTime">0:00</span>
-      </div>
+<div class="field">
 
-      <div id="playStage" class="player-stage">
+<label>곡 제목</label>
 
-        <div class="falling-lanes" id="playLanes"></div>
+<input
+  id="songTitle"
+  value="나의 음악"
+>
 
-        <div class="hit-line"></div>
+</div>
 
-        <div id="playNotes"></div>
 
-        <div id="playPiano" class="player-piano"></div>
+<div class="field">
 
-      </div>
+<label>악기</label>
 
-    </div>
+<select id="instrument">
 
-  </div>
+<option value="piano">
+🎹 피아노
+</option>
+
+<option value="violin">
+🎻 바이올린
+</option>
+
+<option value="guitar">
+🎸 기타
+</option>
+
+<option value="drum">
+🥁 드럼
+</option>
+
+</select>
+
+</div>
+
+
+<div class="field">
+
+<label>손 모드</label>
+
+<select id="handMode">
+
+<option value="one">
+한 손
+</option>
+
+<option value="two">
+두 손
+</option>
+
+<option value="four">
+포 핸드
+</option>
+
+</select>
+
+</div>
+
+
+<div class="field">
+
+<label>BPM</label>
+
+<input
+  id="tempo"
+  type="number"
+  min="30"
+  max="300"
+  value="120"
+>
+
+</div>
+
+</div>
+
+
+<div
+  class="form-grid"
+  style="margin-top:12px"
+>
+
+<div class="field">
+
+<label>시작 박자</label>
+
+<input
+  id="startBeat"
+  type="number"
+  min="0"
+  step=".5"
+  value="0"
+>
+
+</div>
+
+
+<div class="field">
+
+<label>음표 길이</label>
+
+<select id="duration">
+
+<option value=".5">
+8분음표
+</option>
+
+<option value="1" selected>
+4분음표
+</option>
+
+<option value="1.5">
+점4분음표
+</option>
+
+<option value="2">
+2분음표
+</option>
+
+<option value="4">
+온음표
+</option>
+
+</select>
+
+</div>
+
+
+<div class="field">
+
+<label>선택된 음</label>
+
+<input
+  id="selectedNotes"
+  value="없음"
+  readonly
+>
+
+</div>
+
+
+<div class="field">
+
+<label>추가 후 박자</label>
+
+<select id="advanceMode">
+
+<option value="none">
+그대로
+</option>
+
+<option value="duration">
+음표 길이만큼 이동
+</option>
+
+</select>
+
+</div>
+
+</div>
+
+
+<div class="toolbar">
+
+<button
+  class="primary"
+  onclick="addSelectedNotes()"
+>
+🎵 선택 음 추가
+</button>
+
+<button
+  class="secondary"
+  onclick="clearSelectedKeys()"
+>
+선택 해제
+</button>
+
+<button
+  class="secondary"
+  onclick="undoLast()"
+>
+↩️ 되돌리기
+</button>
+
+<button
+  class="danger"
+  onclick="clearComposition()"
+>
+전체 삭제
+</button>
+
+<button
+  class="secondary"
+  onclick="exportSong()"
+>
+JSON 내보내기
+</button>
+
+<label class="secondary">
+JSON 가져오기
+
+<input
+  id="importFile"
+  type="file"
+  accept=".json"
+  hidden
+>
+
+</label>
+
+<button
+  class="primary"
+  onclick="saveCurrentSong()"
+>
+💾 Firebase 저장
+</button>
+
+</div>
+
+
+<div class="info">
+
+같은 시작 박자에 여러 음을 선택해서 추가하면
+자동으로 <b>화음</b>으로 처리됩니다.
+
+</div>
+
+</div>
+
+
+<div class="panel">
+
+<div class="panel-title">
+
+<h2>🎹 3옥타브 피아노</h2>
+
+<span>
+C3 ~ B5 · 36음
+</span>
+
+</div>
+
+<div class="piano-scroll">
+
+<div
+  id="editorPiano"
+  class="piano"
+></div>
+
+</div>
+
+</div>
+
+
+<div class="panel">
+
+<div class="panel-title">
+
+<h2>🎼 타임라인</h2>
+
+<span id="noteCount">
+0개 음표
+</span>
+
+</div>
+
+
+<div class="timeline-wrap">
+
+<div
+  id="timeline"
+  class="timeline"
+>
+
+<div class="timeline-grid"></div>
+
+</div>
+
+</div>
+
+
+<div
+  id="noteList"
+  class="note-list"
+></div>
+
+</div>
 
 </section>
 
 
-<!-- GAME -->
-<section id="game" class="screen">
+<!-- =========================
+     LIBRARY / PLAYBACK
+========================= -->
 
-  <button class="secondary back-btn" onclick="showScreen('home')">
-    ← 홈
-  </button>
+<section
+  id="library"
+  class="screen"
+>
 
-  <div class="panel">
-    <div class="panel-title">
-      <div>
-        <h2>🎮 음악 플레이</h2>
-        <p style="color:#777;margin-top:5px">
-          내려오는 음표가 피아노에 도착할 때 해당 음을 눌러주세요.
-        </p>
-      </div>
-    </div>
-
-    <div class="form-grid">
-
-      <div class="field">
-        <label>플레이할 곡</label>
-        <select id="gameSong"></select>
-      </div>
-
-      <div class="field">
-        <label>판정 범위</label>
-        <select id="judgeRange">
-          <option value="0.16">엄격</option>
-          <option value="0.25" selected>일반</option>
-          <option value="0.4">쉬움</option>
-        </select>
-      </div>
-
-    </div>
-
-    <div class="toolbar">
-      <button class="primary" onclick="startGame()">
-        🎮 플레이 시작
-      </button>
-
-      <button class="danger" onclick="stopGame()">
-        ⏹ 플레이 종료
-      </button>
-    </div>
-  </div>
-
-  <div id="gamePanel" class="panel hidden">
-
-    <div class="player">
-
-      <div class="player-top">
-        <strong id="gameTitle">Music Game</strong>
-        <span id="gameProgress">0%</span>
-      </div>
-
-      <div id="gameStage" class="player-stage">
-
-        <div class="falling-lanes" id="gameLanes"></div>
-
-        <div class="hit-line"></div>
-
-        <div id="gameNotes"></div>
-
-        <div id="judgeResult" class="result">
-          PERFECT!
-        </div>
-
-        <div id="gamePiano" class="player-piano"></div>
-
-      </div>
-
-      <div class="game-info">
-
-        <div class="stat">
-          <small>SCORE</small>
-          <strong id="gameScore">0</strong>
-        </div>
-
-        <div class="stat">
-          <small>COMBO</small>
-          <strong id="gameCombo">0</strong>
-        </div>
-
-        <div class="stat">
-          <small>ACCURACY</small>
-          <strong id="gameAccuracy">100%</strong>
-        </div>
-
-      </div>
-
-      <div class="game-controls">
-        <span style="color:#aaa;font-size:12px">
-          PC 키보드 또는 화면 피아노 사용 가능
-        </span>
-      </div>
-
-    </div>
-
-  </div>
+<button
+  class="secondary back-btn"
+  onclick="showScreen('home')"
+>
+← 홈
+</button>
 
 
-  <div class="panel">
-    <div class="panel-title">
-      <h2>🏆 리더보드</h2>
-    </div>
+<div class="panel">
 
-    <div id="leaderboard" class="empty">
-      곡을 선택하면 리더보드가 표시됩니다.
-    </div>
-  </div>
+<div class="panel-title">
+
+<div>
+<h2>▶️ 음악 재생</h2>
+</div>
+
+<button
+  class="secondary"
+  onclick="loadSongs()"
+>
+🔄 새로고침
+</button>
+
+</div>
+
+
+<div
+  id="songGrid"
+  class="song-grid"
+>
+<div class="empty">
+음악을 불러오는 중...
+</div>
+</div>
+
+</div>
+
+
+<div
+  id="playbackPanel"
+  class="panel hidden"
+>
+
+<div class="panel-title">
+
+<h2 id="playTitle">
+음악 재생
+</h2>
+
+<button
+  class="danger"
+  onclick="stopPlayback()"
+>
+⏹ 정지
+</button>
+
+</div>
+
+
+<div class="player">
+
+<div class="player-top">
+
+<span id="playInstrument">
+🎹 피아노
+</span>
+
+<span id="playTime">
+0:00
+</span>
+
+</div>
+
+
+<div
+  id="playStage"
+  class="player-stage"
+>
+
+<div
+  id="playLanes"
+  class="falling-lanes"
+></div>
+
+<div class="hit-line"></div>
+
+<div
+  id="playNotes"
+  class="notes-layer"
+></div>
+
+<div
+  id="playPiano"
+  class="player-piano"
+></div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- =========================
+     GAME
+========================= -->
+
+<section
+  id="game"
+  class="screen"
+>
+
+<button
+  class="secondary back-btn"
+  onclick="showScreen('home')"
+>
+← 홈
+</button>
+
+
+<div class="panel">
+
+<div class="panel-title">
+<h2>🎮 음악 플레이</h2>
+</div>
+
+
+<div class="form-grid">
+
+<div class="field">
+
+<label>
+플레이할 음악
+</label>
+
+<select id="gameSong">
+
+<option value="">
+음악을 불러오는 중...
+</option>
+
+</select>
+
+</div>
+
+
+<div class="field">
+
+<label>
+판정 난이도
+</label>
+
+<select id="judgeRange">
+
+<option value=".12">
+엄격
+</option>
+
+<option
+  value=".22"
+  selected
+>
+일반
+</option>
+
+<option value=".38">
+쉬움
+</option>
+
+</select>
+
+</div>
+
+</div>
+
+
+<div class="toolbar">
+
+<button
+  class="primary"
+  onclick="startGame()"
+>
+🎮 플레이 시작
+</button>
+
+<button
+  class="danger"
+  onclick="stopGame()"
+>
+⏹ 종료
+</button>
+
+</div>
+
+</div>
+
+
+<div
+  id="gamePanel"
+  class="panel hidden"
+>
+
+<div class="player">
+
+<div class="player-top">
+
+<strong id="gameTitle">
+Music Game
+</strong>
+
+<span id="gameProgress">
+0%
+</span>
+
+</div>
+
+
+<div
+  id="gameStage"
+  class="player-stage"
+>
+
+<div
+  id="gameLanes"
+  class="falling-lanes"
+></div>
+
+<div class="hit-line"></div>
+
+<div
+  id="gameNotes"
+  class="notes-layer"
+></div>
+
+<div
+  id="judgeResult"
+  class="judge"
+>
+PERFECT!
+</div>
+
+<div
+  id="gamePiano"
+  class="player-piano"
+></div>
+
+</div>
+
+
+<div class="game-info">
+
+<div class="stat">
+<small>SCORE</small>
+<strong id="gameScore">0</strong>
+</div>
+
+<div class="stat">
+<small>COMBO</small>
+<strong id="gameCombo">0</strong>
+</div>
+
+<div class="stat">
+<small>ACCURACY</small>
+<strong id="gameAccuracy">100%</strong>
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+
+<div class="panel">
+
+<div class="panel-title">
+<h2>🏆 리더보드</h2>
+</div>
+
+<div
+  id="leaderboard"
+  class="empty"
+>
+곡을 선택하면 리더보드가 표시됩니다.
+</div>
+
+</div>
 
 </section>
 
@@ -964,9 +1347,14 @@ main{
 
 <script type="module">
 
+/* =========================================================
+   FIREBASE
+========================================================= */
+
 import {
   initializeApp
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+} from
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 
 import {
   getDatabase,
@@ -977,186 +1365,352 @@ import {
   query,
   orderByChild,
   limitToLast
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+} from
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
 import {
   getAuth,
   signInAnonymously,
   onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+} from
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-
-/* =========================================================
-   FIREBASE
-========================================================= */
 
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "formwheel.firebaseapp.com",
-  databaseURL: "https://formwheel-default-rtdb.firebaseio.com",
-  projectId: "formwheel",
-  storageBucket: "formwheel.firebasestorage.app",
-  messagingSenderId: "431583088241",
-  appId: "1:431583088241:web:74e0e34ea1e3e1170c55d0",
-  measurementId: "G-T372YXDF8D"
+
+  apiKey:
+    "AIzaSyBreTSe1m0-xlbF4aupnU5isRZCihR25IE",
+
+  authDomain:
+    "formwheel.firebaseapp.com",
+
+  databaseURL:
+    "https://formwheel-default-rtdb.firebaseio.com",
+
+  projectId:
+    "formwheel",
+
+  storageBucket:
+    "formwheel.firebasestorage.app",
+
+  messagingSenderId:
+    "431583088241",
+
+  appId:
+    "1:431583088241:web:74e0e34ea1e3e1170c55d0",
+
+  measurementId:
+    "G-T372YXDF8D"
+
 };
 
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
-const auth = getAuth(app);
 
-const MUSIC_ROOT = "formwheelMusic";
+const MUSIC_ROOT =
+  "formwheelMusic";
 
-let currentUser = null;
 
-signInAnonymously(auth).catch(err=>{
-  console.warn("Anonymous auth:",err);
-});
+let db=null;
+let auth=null;
+let currentUser=null;
 
-onAuthStateChanged(auth,user=>{
-  currentUser = user;
-});
+let firebaseReady=false;
+let authReady=false;
 
 
 /* =========================================================
-   3 OCTAVE NOTE SYSTEM
+   FIREBASE STATUS
 ========================================================= */
 
-const NOTE_NAMES = [
+function setFirebaseStatus(
+  type,
+  text
+){
+
+  const badge=
+    document.getElementById(
+      "firebaseStatus"
+    );
+
+  const message=
+    document.getElementById(
+      "firebaseMessage"
+    );
+
+  badge.className=
+    "firebase-status "+type;
+
+  badge.textContent=text;
+
+  if(message){
+    message.textContent=text;
+  }
+
+}
+
+
+/* =========================================================
+   FIREBASE INITIALIZATION
+========================================================= */
+
+async function initFirebase(){
+
+  try{
+
+    const app=
+      initializeApp(
+        firebaseConfig
+      );
+
+    db=
+      getDatabase(app);
+
+    auth=
+      getAuth(app);
+
+    firebaseReady=true;
+
+
+    setFirebaseStatus(
+      "wait",
+      "🔐 Firebase 인증 중..."
+    );
+
+
+    onAuthStateChanged(
+      auth,
+      user=>{
+
+        if(user){
+
+          currentUser=user;
+          authReady=true;
+
+          setFirebaseStatus(
+            "ok",
+            "🟢 Firebase 연결됨"
+          );
+
+        }else{
+
+          currentUser=null;
+
+          /*
+             null 상태에서도 무한 대기하지 않음.
+          */
+
+          if(!authReady){
+
+            setFirebaseStatus(
+              "wait",
+              "🔐 Firebase 인증 중..."
+            );
+
+          }
+
+        }
+
+      }
+    );
+
+
+    try{
+
+      await signInAnonymously(
+        auth
+      );
+
+    }catch(error){
+
+      console.error(
+        "Anonymous auth error:",
+        error
+      );
+
+      authReady=false;
+
+      setFirebaseStatus(
+        "error",
+        "❌ Firebase 인증 실패"
+      );
+
+    }
+
+
+    loadSongs();
+
+  }catch(error){
+
+    console.error(
+      "Firebase init error:",
+      error
+    );
+
+    firebaseReady=false;
+    authReady=false;
+
+    setFirebaseStatus(
+      "error",
+      "❌ Firebase 연결 실패"
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   NOTE DATA
+========================================================= */
+
+const NOTE_NAMES=[
   "C","C#","D","D#","E","F",
   "F#","G","G#","A","A#","B"
 ];
 
-const WHITE_NAMES = [
-  "C","D","E","F","G","A","B"
-];
 
-const ALL_NOTES = [];
+const ALL_NOTES=[];
 
-for(let octave=3; octave<=5; octave++){
-  for(const n of NOTE_NAMES){
-    ALL_NOTES.push(n + octave);
+
+for(
+  let octave=3;
+  octave<=5;
+  octave++
+){
+
+  for(
+    const name of NOTE_NAMES
+  ){
+
+    ALL_NOTES.push(
+      name+octave
+    );
+
   }
+
 }
 
-const WHITE_NOTES = ALL_NOTES.filter(n =>
-  !n.includes("#")
-);
 
-const BLACK_NOTES = ALL_NOTES.filter(n =>
-  n.includes("#")
-);
+const NOTE_INDEX=
+  Object.fromEntries(
+    ALL_NOTES.map(
+      (note,index)=>[
+        note,
+        index
+      ]
+    )
+  );
 
-const KEYBOARD_MAP = {
-  "z":"C3",
-  "s":"C#3",
-  "x":"D3",
-  "d":"D#3",
-  "c":"E3",
-  "v":"F3",
-  "g":"F#3",
-  "b":"G3",
-  "h":"G#3",
-  "n":"A3",
-  "j":"A#3",
-  "m":"B3",
 
-  "q":"C4",
-  "2":"C#4",
-  "w":"D4",
-  "3":"D#4",
-  "e":"E4",
-  "r":"F4",
-  "5":"F#4",
-  "t":"G4",
-  "6":"G#4",
-  "y":"A4",
-  "7":"A#4",
-  "u":"B4",
+const KEYBOARD_MAP={
 
-  "i":"C5",
-  "9":"C#5",
-  "o":"D5",
-  "0":"D#5",
-  "p":"E5",
+  z:"C3",
+  s:"C#3",
+  x:"D3",
+  d:"D#3",
+  c:"E3",
+  v:"F3",
+  g:"F#3",
+  b:"G3",
+  h:"G#3",
+  n:"A3",
+  j:"A#3",
+  m:"B3",
+
+  q:"C4",
+  2:"C#4",
+  w:"D4",
+  3:"D#4",
+  e:"E4",
+  r:"F4",
+  5:"F#4",
+  t:"G4",
+  6:"G#4",
+  y:"A4",
+  7:"A#4",
+  u:"B4",
+
+  i:"C5",
+  9:"C#5",
+  o:"D5",
+  0:"D#5",
+  p:"E5",
   "[":"F5",
   "=":"F#5",
   "]":"G5"
-};
 
-const NOTE_INDEX = Object.fromEntries(
-  ALL_NOTES.map((n,i)=>[n,i])
-);
+};
 
 
 /* =========================================================
-   GLOBAL DATA
+   GLOBAL STATE
 ========================================================= */
 
-let composition = {
+let composition={
+
   title:"나의 음악",
+
   instrument:"piano",
+
   handMode:"two",
+
   tempo:120,
+
   notes:[]
+
 };
 
-let selectedKeys = new Set();
 
-let songsCache = [];
+let selectedKeys=
+  new Set();
 
-let audioContext = null;
 
-let playback = {
+let songsCache=[];
+
+
+let audioContext=null;
+
+
+const playback={
+
   active:false,
-  animation:null,
-  startTime:0,
+
+  raf:null,
+
   song:null,
-  endTime:0
+
+  startedAt:0,
+
+  endSeconds:0,
+
+  scheduled:new Set()
+
 };
 
-let game = {
+
+const game={
+
   active:false,
-  animation:null,
-  startTime:0,
+
+  raf:null,
+
   song:null,
+
+  startedAt:0,
+
   score:0,
+
   combo:0,
+
   hits:0,
+
   misses:0,
+
   judged:0,
+
   hitNotes:new Set(),
-  totalDuration:0
-};
 
+  totalSeconds:0
 
-/* =========================================================
-   SCREEN
-========================================================= */
-
-window.showScreen = function(name){
-
-  stopPlayback();
-  stopGame();
-
-  document.querySelectorAll(".screen")
-    .forEach(el=>el.classList.remove("active"));
-
-  const target = document.getElementById(name);
-
-  if(target){
-    target.classList.add("active");
-  }
-
-  if(name==="library"){
-    loadSongs();
-  }
-
-  if(name==="game"){
-    loadGameSongs();
-  }
-
-  window.scrollTo(0,0);
 };
 
 
@@ -1167,26 +1721,40 @@ window.showScreen = function(name){
 function ensureAudio(){
 
   if(!audioContext){
-    audioContext = new AudioContext();
+
+    audioContext=
+      new AudioContext();
+
   }
 
-  if(audioContext.state==="suspended"){
+  if(
+    audioContext.state===
+    "suspended"
+  ){
+
     audioContext.resume();
+
   }
+
 }
 
 
-function noteToFrequency(note){
+function getFrequency(
+  note
+){
 
-  const match = note.match(/^([A-G])(#?)(\d)$/);
+  const match=
+    note.match(
+      /^([A-G])(#?)(\d)$/
+    );
 
-  if(!match) return 440;
+  if(!match){
+    return 440;
+  }
 
-  const letter = match[1];
-  const sharp = match[2];
-  const octave = Number(match[3]);
 
-  const semitoneMap = {
+  const base={
+
     C:0,
     D:2,
     E:4,
@@ -1194,229 +1762,510 @@ function noteToFrequency(note){
     G:7,
     A:9,
     B:11
+
   };
 
-  let midi =
-    12 * (octave + 1) +
-    semitoneMap[letter];
 
-  if(sharp) midi++;
+  let midi=
+    12*
+    (
+      Number(match[3])+1
+    )+
+    base[match[1]];
 
-  return 440 * Math.pow(2,(midi-69)/12);
+
+  if(match[2]){
+    midi++;
+  }
+
+
+  return 440*
+    Math.pow(
+      2,
+      (midi-69)/12
+    );
+
 }
 
 
-function playTone(note,duration=.3,instrument="piano"){
+function playTone(
+  note,
+  duration=.25,
+  instrument="piano"
+){
 
   ensureAudio();
 
-  const ctx = audioContext;
-  const now = ctx.currentTime;
+  const ctx=
+    audioContext;
 
-  const osc = ctx.createOscillator();
-  const gain = ctx.createGain();
 
-  const freq = noteToFrequency(note);
+  const oscillator=
+    ctx.createOscillator();
 
-  if(instrument==="violin"){
-    osc.type="sawtooth";
-  }else if(instrument==="guitar"){
-    osc.type="triangle";
+  const gain=
+    ctx.createGain();
+
+
+  if(
+    instrument==="violin"
+  ){
+
+    oscillator.type=
+      "sawtooth";
+
+  }else if(
+    instrument==="guitar"
+  ){
+
+    oscillator.type=
+      "triangle";
+
   }else{
-    osc.type="sine";
+
+    oscillator.type=
+      "sine";
+
   }
 
-  osc.frequency.value=freq;
 
-  gain.gain.setValueAtTime(.0001,now);
-  gain.gain.exponentialRampToValueAtTime(.18,now+.015);
-  gain.gain.exponentialRampToValueAtTime(.0001,now+Math.max(.05,duration));
+  oscillator.frequency.value=
+    getFrequency(note);
 
-  osc.connect(gain);
+
+  const now=
+    ctx.currentTime;
+
+
+  gain.gain.setValueAtTime(
+    .0001,
+    now
+  );
+
+
+  gain.gain.exponentialRampToValueAtTime(
+    .15,
+    now+.02
+  );
+
+
+  gain.gain.exponentialRampToValueAtTime(
+    .0001,
+    now+
+    Math.max(
+      .06,
+      duration
+    )
+  );
+
+
+  oscillator.connect(gain);
   gain.connect(ctx.destination);
 
-  osc.start(now);
-  osc.stop(now+Math.max(.06,duration)+.03);
+
+  oscillator.start(now);
+
+  oscillator.stop(
+    now+
+    Math.max(
+      .06,
+      duration
+    )+
+    .03
+  );
+
 }
 
 
 /* =========================================================
-   PIANO UI
+   SCREEN
 ========================================================= */
 
-function buildEditorPiano(){
+window.showScreen=
+function(name){
 
-  const piano = document.getElementById("editorPiano");
-
-  piano.innerHTML="";
-
-  const whiteIndex = {};
-
-  let wi=0;
-
-  WHITE_NOTES.forEach(note=>{
-
-    const key=document.createElement("div");
-
-    key.className="white-key";
-    key.dataset.note=note;
-
-    key.innerHTML=`<span>${note}</span>`;
-
-    key.addEventListener("mousedown",()=>{
-      toggleKey(note,key);
-      playTone(note,.2,document.getElementById("instrument").value);
-    });
-
-    piano.appendChild(key);
-
-    whiteIndex[note]=wi++;
-
-  });
+  stopPlayback();
+  stopGame();
 
 
-  WHITE_NOTES.forEach(note=>{
-
-    const base=note.replace(/\d/,"");
-
-    if(["C","D","F","G","A"].includes(base)){
-
-      const octave=note.slice(-1);
-
-      const index=whiteIndex[base+octave];
-
-      const black=document.createElement("div");
-
-      black.className="black-key";
-      black.dataset.note=base+"#"+octave;
-
-      const left=((index+1)*100/WHITE_NOTES.length);
-
-      black.style.left=`calc(${left}% - 14px)`;
-
-      black.textContent=base+"#"+octave;
-
-      black.addEventListener("mousedown",e=>{
-        e.stopPropagation();
-        toggleKey(base+"#"+octave,black);
-        playTone(base+"#"+octave,.2,document.getElementById("instrument").value);
-      });
-
-      piano.appendChild(black);
-    }
-
-  });
-}
+  document
+    .querySelectorAll(".screen")
+    .forEach(
+      screen=>
+        screen.classList.remove(
+          "active"
+        )
+    );
 
 
-function toggleKey(note,element){
+  const target=
+    document.getElementById(name);
 
-  if(selectedKeys.has(note)){
-    selectedKeys.delete(note);
-    element.classList.remove("selected");
-  }else{
-    selectedKeys.add(note);
-    element.classList.add("selected");
+
+  if(target){
+
+    target.classList.add(
+      "active"
+    );
+
   }
 
-  updateSelectedText();
-}
+
+  if(name==="library"){
+
+    loadSongs();
+
+  }
 
 
-function updateSelectedText(){
+  if(name==="game"){
 
-  const arr=[...selectedKeys]
-    .sort((a,b)=>NOTE_INDEX[a]-NOTE_INDEX[b]);
+    loadGameSongs();
 
-  document.getElementById("selectedNotes").value =
-    arr.length ? arr.join(" + ") : "없음";
-}
+  }
 
 
-window.clearSelectedKeys=function(){
+  window.scrollTo(
+    0,
+    0
+  );
 
-  selectedKeys.clear();
-
-  document.querySelectorAll(
-    "#editorPiano .selected"
-  ).forEach(el=>el.classList.remove("selected"));
-
-  updateSelectedText();
 };
 
 
 /* =========================================================
-   ADD NOTES / CHORDS
+   EDITOR PIANO
 ========================================================= */
 
-window.addSelectedNotes=function(){
+function buildEditorPiano(){
 
-  if(selectedKeys.size===0){
-    alert("먼저 피아노에서 음을 선택해주세요.");
+  const piano=
+    document.getElementById(
+      "editorPiano"
+    );
+
+
+  piano.innerHTML="";
+
+
+  const whiteNotes=
+    ALL_NOTES.filter(
+      note=>
+        !note.includes("#")
+    );
+
+
+  const positions={};
+
+
+  whiteNotes.forEach(
+    (note,index)=>{
+
+      positions[note]=index;
+
+
+      const key=
+        document.createElement(
+          "div"
+        );
+
+
+      key.className=
+        "white-key";
+
+
+      key.dataset.note=
+        note;
+
+
+      key.innerHTML=
+        `<span>${note}</span>`;
+
+
+      key.addEventListener(
+        "mousedown",
+        ()=>{
+
+          toggleEditorKey(
+            note,
+            key
+          );
+
+
+          playTone(
+            note,
+            .2,
+            document.getElementById(
+              "instrument"
+            ).value
+          );
+
+        }
+      );
+
+
+      piano.appendChild(key);
+
+    }
+  );
+
+
+  whiteNotes.forEach(
+    note=>{
+
+      const base=
+        note.replace(
+          /\d/g,
+          ""
+        );
+
+
+      const octave=
+        note.slice(-1);
+
+
+      if(
+        !["C","D","F","G","A"]
+          .includes(base)
+      ){
+        return;
+      }
+
+
+      const position=
+        positions[
+          base+octave
+        ];
+
+
+      const black=
+        document.createElement(
+          "div"
+        );
+
+
+      black.className=
+        "black-key";
+
+
+      black.dataset.note=
+        base+
+        "#"+
+        octave;
+
+
+      black.textContent=
+        black.dataset.note;
+
+
+      black.style.left=
+        `calc(${
+          (
+            (position+1)/
+            whiteNotes.length
+          )*100
+        }% - 14px)`;
+
+
+      black.addEventListener(
+        "mousedown",
+        event=>{
+
+          event.stopPropagation();
+
+
+          toggleEditorKey(
+            black.dataset.note,
+            black
+          );
+
+
+          playTone(
+            black.dataset.note,
+            .2,
+            document.getElementById(
+              "instrument"
+            ).value
+          );
+
+        }
+      );
+
+
+      piano.appendChild(
+        black
+      );
+
+    }
+  );
+
+}
+
+
+function toggleEditorKey(
+  note,
+  element
+){
+
+  if(
+    selectedKeys.has(note)
+  ){
+
+    selectedKeys.delete(
+      note
+    );
+
+    element.classList.remove(
+      "selected"
+    );
+
+  }else{
+
+    selectedKeys.add(
+      note
+    );
+
+    element.classList.add(
+      "selected"
+    );
+
+  }
+
+
+  document.getElementById(
+    "selectedNotes"
+  ).value=
+    [...selectedKeys]
+      .sort(
+        (a,b)=>
+          NOTE_INDEX[a]-
+          NOTE_INDEX[b]
+      )
+      .join(" + ") ||
+      "없음";
+
+}
+
+
+window.clearSelectedKeys=
+function(){
+
+  selectedKeys.clear();
+
+
+  document
+    .querySelectorAll(
+      "#editorPiano .selected"
+    )
+    .forEach(
+      key=>
+        key.classList.remove(
+          "selected"
+        )
+    );
+
+
+  document.getElementById(
+    "selectedNotes"
+  ).value=
+    "없음";
+
+};
+
+
+/* =========================================================
+   ADD NOTES
+========================================================= */
+
+window.addSelectedNotes=
+function(){
+
+  if(
+    !selectedKeys.size
+  ){
+
+    alert(
+      "피아노에서 음을 먼저 선택해주세요."
+    );
+
     return;
   }
 
-  const beat=Number(
-    document.getElementById("startBeat").value
-  ) || 0;
 
-  const duration=Number(
-    document.getElementById("duration").value
-  ) || 1;
+  const start=
+    Number(
+      document.getElementById(
+        "startBeat"
+      ).value
+    )||0;
 
-  const notes=[...selectedKeys];
 
-  notes.forEach(note=>{
+  const duration=
+    Number(
+      document.getElementById(
+        "duration"
+      ).value
+    )||1;
 
-    composition.notes.push({
-      id:crypto.randomUUID(),
-      note,
-      start:beat,
-      duration
-    });
 
-  });
+  [...selectedKeys]
+    .forEach(
+      note=>{
+
+        composition.notes.push({
+
+          id:
+            crypto.randomUUID(),
+
+          note,
+
+          start,
+
+          duration
+
+        });
+
+      }
+    );
+
+
+  composition.notes.sort(
+    (a,b)=>{
+
+      if(
+        a.start!==b.start
+      ){
+
+        return a.start-b.start;
+
+      }
+
+      return NOTE_INDEX[a.note]-
+        NOTE_INDEX[b.note];
+
+    }
+  );
+
 
   if(
-    document.getElementById("advanceMode").value==="duration"
+    document.getElementById(
+      "advanceMode"
+    ).value==="duration"
   ){
-    document.getElementById("startBeat").value =
-      beat + duration;
+
+    document.getElementById(
+      "startBeat"
+    ).value=
+      start+duration;
+
   }
 
-  composition.notes.sort((a,b)=>{
-    if(a.start!==b.start) return a.start-b.start;
-    return NOTE_INDEX[a.note]-NOTE_INDEX[b.note];
-  });
 
   renderTimeline();
   renderNoteList();
 
   clearSelectedKeys();
-};
 
-
-window.undoLast=function(){
-
-  if(!composition.notes.length) return;
-
-  composition.notes.pop();
-
-  renderTimeline();
-  renderNoteList();
-};
-
-
-window.clearComposition=function(){
-
-  if(!composition.notes.length) return;
-
-  if(!confirm("모든 음표를 삭제할까요?")) return;
-
-  composition.notes=[];
-
-  renderTimeline();
-  renderNoteList();
 };
 
 
@@ -1426,249 +2275,648 @@ window.clearComposition=function(){
 
 function renderTimeline(){
 
-  const timeline=document.getElementById("timeline");
+  const timeline=
+    document.getElementById(
+      "timeline"
+    );
 
-  timeline.querySelectorAll(".note-block")
-    .forEach(el=>el.remove());
 
-  const maxBeat=Math.max(
-    16,
-    ...composition.notes.map(n=>n.start+n.duration)
-  );
+  timeline
+    .querySelectorAll(
+      ".note-block"
+    )
+    .forEach(
+      node=>node.remove()
+    );
 
-  timeline.style.width =
-    `${Math.max(1100,maxBeat*55+100)}px`;
 
-  composition.notes.forEach(note=>{
+  const maxBeat=
+    Math.max(
+      16,
+      ...composition.notes.map(
+        note=>
+          note.start+
+          note.duration
+      )
+    );
 
-    const block=document.createElement("div");
 
-    block.className="note-block";
+  timeline.style.width=
+    `${Math.max(
+      1200,
+      maxBeat*55+100
+    )}px`;
 
-    const sameStart=composition.notes.filter(
-      n=>n.start===note.start
-    ).length>1;
 
-    if(sameStart){
-      block.classList.add("chord");
-    }
+  composition.notes
+    .forEach(
+      note=>{
 
-    block.style.left =
-      `${note.start*55}px`;
+        const block=
+          document.createElement(
+            "div"
+          );
 
-    block.style.top =
-      `${120-(NOTE_INDEX[note.note]*2.3)}px`;
 
-    block.style.width =
-      `${Math.max(25,note.duration*55-4)}px`;
+        const chord=
+          composition.notes.filter(
+            n=>
+              n.start===note.start
+          ).length>1;
 
-    block.textContent=note.note;
 
-    timeline.appendChild(block);
+        block.className=
+          "note-block"+
+          (
+            chord
+            ?" chord"
+            :""
+          );
 
-  });
 
-  document.getElementById("noteCount").textContent =
+        block.style.left=
+          `${note.start*55}px`;
+
+
+        block.style.top=
+          `${260-NOTE_INDEX[note.note]*5}px`;
+
+
+        block.style.width=
+          `${Math.max(
+            25,
+            note.duration*55-4
+          )}px`;
+
+
+        block.textContent=
+          note.note;
+
+
+        timeline.appendChild(
+          block
+        );
+
+      }
+    );
+
+
+  document.getElementById(
+    "noteCount"
+  ).textContent=
     `${composition.notes.length}개 음표`;
+
 }
 
 
 function renderNoteList(){
 
-  const list=document.getElementById("noteList");
+  const list=
+    document.getElementById(
+      "noteList"
+    );
+
 
   list.innerHTML="";
 
-  if(!composition.notes.length){
+
+  if(
+    !composition.notes.length
+  ){
 
     list.innerHTML=
-      `<div class="empty">아직 음표가 없습니다.</div>`;
+      `<div class="empty">
+        아직 음표가 없습니다.
+      </div>`;
 
     return;
   }
 
-  composition.notes.forEach((note,index)=>{
 
-    const row=document.createElement("div");
+  composition.notes
+    .forEach(
+      (note,index)=>{
 
-    row.className="note-row";
+        const row=
+          document.createElement(
+            "div"
+          );
 
-    const lengthName =
-      note.duration===.5 ? "8분음표" :
-      note.duration===1 ? "4분음표" :
-      note.duration===1.5 ? "점4분음표" :
-      note.duration===2 ? "2분음표" :
-      note.duration===4 ? "온음표" :
-      `${note.duration}박`;
 
-    row.innerHTML=`
-      <span>
-        ${index+1}. <b>${note.note}</b>
-        · ${note.start}박
-        · ${lengthName}
-      </span>
+        row.className=
+          "note-row";
 
-      <div class="note-actions">
-        <button class="small-btn"
-          data-index="${index}">
-          삭제
-        </button>
-      </div>
-    `;
 
-    row.querySelector("button")
-      .onclick=()=>{
-        composition.notes.splice(index,1);
+        const name=
+          note.duration===.5
+          ?"8분음표"
+          :note.duration===1
+          ?"4분음표"
+          :note.duration===1.5
+          ?"점4분음표"
+          :note.duration===2
+          ?"2분음표"
+          :note.duration===4
+          ?"온음표"
+          :`${note.duration}박`;
+
+
+        row.innerHTML=`
+
+          <span>
+            ${index+1}.
+            <b>${note.note}</b>
+            · ${note.start}박
+            · ${name}
+          </span>
+
+          <button class="secondary">
+            삭제
+          </button>
+
+        `;
+
+
+        row.querySelector(
+          "button"
+        ).onclick=()=>{
+
+          composition.notes
+            .splice(index,1);
+
+          renderTimeline();
+          renderNoteList();
+
+        };
+
+
+        list.appendChild(
+          row
+        );
+
+      }
+    );
+
+}
+
+
+window.undoLast=
+function(){
+
+  if(
+    !composition.notes.length
+  ){
+    return;
+  }
+
+
+  composition.notes.pop();
+
+  renderTimeline();
+  renderNoteList();
+
+};
+
+
+window.clearComposition=
+function(){
+
+  if(
+    !composition.notes.length
+  ){
+    return;
+  }
+
+
+  if(
+    !confirm(
+      "모든 음표를 삭제할까요?"
+    )
+  ){
+    return;
+  }
+
+
+  composition.notes=[];
+
+  renderTimeline();
+  renderNoteList();
+
+};
+
+
+/* =========================================================
+   IMPORT / EXPORT
+========================================================= */
+
+window.exportSong=
+function(){
+
+  const data={
+
+    version:2,
+
+    title:
+      composition.title,
+
+    instrument:
+      composition.instrument,
+
+    handMode:
+      composition.handMode,
+
+    tempo:
+      composition.tempo,
+
+    notes:
+      composition.notes
+
+  };
+
+
+  const blob=
+    new Blob(
+      [
+        JSON.stringify(
+          data,
+          null,
+          2
+        )
+      ],
+      {
+        type:"application/json"
+      }
+    );
+
+
+  const url=
+    URL.createObjectURL(
+      blob
+    );
+
+
+  const link=
+    document.createElement(
+      "a"
+    );
+
+
+  link.href=url;
+
+  link.download=
+    `${
+      composition.title ||
+      "Formwheel_Music"
+    }.json`;
+
+
+  link.click();
+
+
+  URL.revokeObjectURL(
+    url
+  );
+
+};
+
+
+document.getElementById(
+  "importFile"
+).addEventListener(
+  "change",
+  event=>{
+
+    const file=
+      event.target.files[0];
+
+    if(!file){
+      return;
+    }
+
+
+    const reader=
+      new FileReader();
+
+
+    reader.onload=
+    ()=>{
+
+      try{
+
+        const data=
+          JSON.parse(
+            reader.result
+          );
+
+
+        composition={
+
+          title:
+            data.title ||
+            "가져온 음악",
+
+          instrument:
+            data.instrument ||
+            "piano",
+
+          handMode:
+            data.handMode ||
+            "two",
+
+          tempo:
+            Number(
+              data.tempo
+            )||120,
+
+          notes:
+            (
+              data.notes||[]
+            ).map(
+              note=>({
+
+                id:
+                  note.id ||
+                  crypto.randomUUID(),
+
+                note:
+                  note.note,
+
+                start:
+                  Number(
+                    note.start ??
+                    note.beat ??
+                    0
+                  ),
+
+                duration:
+                  Number(
+                    note.duration
+                  )||1
+
+              })
+            )
+
+        };
+
+
+        updateEditorForm();
+
         renderTimeline();
         renderNoteList();
-      };
 
-    list.appendChild(row);
 
-  });
+        alert(
+          "음악을 가져왔습니다!"
+        );
+
+      }catch(error){
+
+        console.error(error);
+
+        alert(
+          "JSON 파일을 읽지 못했습니다."
+        );
+
+      }
+
+    };
+
+
+    reader.readAsText(
+      file
+    );
+
+  }
+);
+
+
+function updateEditorForm(){
+
+  document.getElementById(
+    "songTitle"
+  ).value=
+    composition.title;
+
+
+  document.getElementById(
+    "instrument"
+  ).value=
+    composition.instrument;
+
+
+  document.getElementById(
+    "handMode"
+  ).value=
+    composition.handMode;
+
+
+  document.getElementById(
+    "tempo"
+  ).value=
+    composition.tempo;
+
 }
 
 
 /* =========================================================
-   SONG EXPORT / IMPORT
+   SAVE
 ========================================================= */
 
-window.exportSong=function(){
+window.saveCurrentSong=
+async function(){
 
-  const data={
-    ...composition,
-    version:2,
-    exportedAt:Date.now()
-  };
+  if(!firebaseReady){
 
-  const blob=new Blob(
-    [JSON.stringify(data,null,2)],
-    {type:"application/json"}
-  );
+    alert(
+      "Firebase가 연결되지 않았습니다."
+    );
 
-  const url=URL.createObjectURL(blob);
-
-  const a=document.createElement("a");
-
-  a.href=url;
-  a.download=
-    `${composition.title||"formwheel_music"}.json`;
-
-  a.click();
-
-  URL.revokeObjectURL(url);
-};
+    return;
+  }
 
 
-window.importSong=function(event){
+  /*
+     인증이 아직 끝나지 않았다면
+     최대 8초 기다림.
+     무한 대기 없음.
+  */
 
-  const file=event.target.files[0];
+  if(!authReady){
 
-  if(!file) return;
+    setFirebaseStatus(
+      "wait",
+      "🔐 Firebase 인증 완료 대기 중..."
+    );
 
-  const reader=new FileReader();
 
-  reader.onload=()=>{
+    const success=
+      await waitForAuthentication(
+        8000
+      );
 
-    try{
 
-      const data=JSON.parse(reader.result);
+    if(!success){
 
-      if(!Array.isArray(data.notes)){
-        throw new Error("잘못된 음악 파일");
-      }
+      alert(
+        "Firebase 인증에 실패했습니다.\n\n"+
+        "Firebase Console → Authentication → "+
+        "Sign-in method → Anonymous를 확인해주세요."
+      );
 
-      composition={
-        title:data.title||"가져온 음악",
-        instrument:data.instrument||"piano",
-        handMode:data.handMode||"two",
-        tempo:Number(data.tempo)||120,
-        notes:data.notes.map(n=>({
-          id:n.id||crypto.randomUUID(),
-          note:n.note,
-          start:Number(n.start??n.beat??0),
-          duration:Number(n.duration??1)
-        }))
-      };
+      return;
 
-      document.getElementById("songTitle").value=composition.title;
-      document.getElementById("instrument").value=composition.instrument;
-      document.getElementById("handMode").value=composition.handMode;
-      document.getElementById("tempo").value=composition.tempo;
-
-      renderTimeline();
-      renderNoteList();
-
-      alert("음악을 가져왔습니다!");
-
-    }catch(e){
-      alert("음악 파일을 읽을 수 없습니다.");
-      console.error(e);
     }
 
-  };
-
-  reader.readAsText(file);
-};
+  }
 
 
-/* =========================================================
-   FIREBASE SAVE
-========================================================= */
+  if(
+    !composition.notes.length
+  ){
 
-window.saveCurrentSong=async function(){
+    alert(
+      "먼저 음악을 만들어주세요."
+    );
 
-  if(!composition.title.trim()){
-    alert("곡 제목을 입력해주세요.");
     return;
   }
 
-  if(!composition.notes.length){
-    alert("먼저 음표를 만들어주세요.");
-    return;
-  }
-
-  if(!currentUser){
-    alert("Firebase 로그인 준비 중입니다.");
-    return;
-  }
 
   try{
 
-    const songRef=push(
-      ref(db,`${MUSIC_ROOT}/songs`)
+    const songRef=
+      push(
+        ref(
+          db,
+          `${MUSIC_ROOT}/songs`
+        )
+      );
+
+
+    await set(
+      songRef,
+      {
+
+        songId:
+          songRef.key,
+
+        title:
+          composition.title ||
+          "제목 없음",
+
+        instrument:
+          composition.instrument,
+
+        handMode:
+          composition.handMode,
+
+        tempo:
+          Number(
+            composition.tempo
+          )||120,
+
+        notes:
+          composition.notes,
+
+        owner:
+          currentUser.uid,
+
+        public:true,
+
+        updatedAt:
+          Date.now(),
+
+        version:2
+
+      }
     );
 
-    const data={
-      songId:songRef.key,
-      title:composition.title,
-      instrument:composition.instrument,
-      handMode:composition.handMode,
-      tempo:Number(composition.tempo),
-      notes:composition.notes,
-      owner:currentUser.uid,
-      public:true,
-      updatedAt:Date.now(),
-      version:2
-    };
 
-    await set(songRef,data);
+    alert(
+      "🎉 Firebase에 저장했습니다!"
+    );
 
-    alert("Firebase에 음악을 저장했습니다!");
 
     await loadSongs();
 
-  }catch(e){
+  }catch(error){
 
-    console.error(e);
+    console.error(error);
 
     alert(
-      "저장에 실패했습니다.\nFirebase Database 규칙을 확인해주세요."
+      "Firebase 저장 실패\n\n"+
+      error.message
     );
 
   }
 
 };
+
+
+function waitForAuthentication(
+  timeout
+){
+
+  return new Promise(
+    resolve=>{
+
+      if(
+        authReady &&
+        currentUser
+      ){
+
+        resolve(true);
+
+        return;
+      }
+
+
+      const started=
+        Date.now();
+
+
+      const timer=
+        setInterval(
+          ()=>{
+
+            if(
+              authReady &&
+              currentUser
+            ){
+
+              clearInterval(
+                timer
+              );
+
+              resolve(true);
+
+              return;
+
+            }
+
+
+            if(
+              Date.now()-
+              started>=
+              timeout
+            ){
+
+              clearInterval(
+                timer
+              );
+
+              resolve(false);
+
+            }
+
+          },
+          100
+        );
+
+    }
+  );
+
+}
 
 
 /* =========================================================
@@ -1677,828 +2925,1973 @@ window.saveCurrentSong=async function(){
 
 async function loadSongs(){
 
-  const grid=document.getElementById("songGrid");
+  const grid=
+    document.getElementById(
+      "songGrid"
+    );
 
-  grid.innerHTML=
-    `<div class="empty">음악을 불러오는 중...</div>`;
+
+  if(!firebaseReady){
+
+    grid.innerHTML=
+      `<div class="empty">
+        Firebase 연결을 기다리는 중...
+      </div>`;
+
+    return;
+
+  }
+
 
   try{
 
-    const snapshot=await get(
-      ref(db,`${MUSIC_ROOT}/songs`)
-    );
+    const snapshot=
+      await get(
+        ref(
+          db,
+          `${MUSIC_ROOT}/songs`
+        )
+      );
+
 
     songsCache=[];
 
-    if(snapshot.exists()){
 
-      snapshot.forEach(child=>{
-        songsCache.push(child.val());
-      });
+    if(
+      snapshot.exists()
+    ){
+
+      snapshot.forEach(
+        child=>{
+
+          const song=
+            child.val();
+
+
+          if(song){
+
+            songsCache.push(
+              song
+            );
+
+          }
+
+        }
+      );
 
     }
 
+
     songsCache.sort(
-      (a,b)=>(b.updatedAt||0)-(a.updatedAt||0)
+      (a,b)=>
+        (b.updatedAt||0)-
+        (a.updatedAt||0)
     );
+
 
     renderSongGrid();
 
     loadGameSongs();
 
-  }catch(e){
+  }catch(error){
 
-    console.error(e);
-
-    grid.innerHTML=
-      `<div class="empty">
-        Firebase에서 음악을 불러오지 못했습니다.
-      </div>`;
-
-  }
-}
-
-
-function renderSongGrid(){
-
-  const grid=document.getElementById("songGrid");
-
-  grid.innerHTML="";
-
-  if(!songsCache.length){
+    console.error(error);
 
     grid.innerHTML=
       `<div class="empty">
-        아직 공개된 음악이 없습니다.
+        ❌ 음악을 불러오지 못했습니다.
+        <br><br>
+        ${escapeHTML(
+          error.message
+        )}
       </div>`;
 
-    return;
   }
 
-  songsCache.forEach(song=>{
-
-    const card=document.createElement("div");
-
-    card.className="song-card";
-
-    const icon=
-      song.instrument==="violin" ? "🎻" :
-      song.instrument==="guitar" ? "🎸" :
-      song.instrument==="drum" ? "🥁" :
-      "🎹";
-
-    card.innerHTML=`
-      <h3>${icon} ${escapeHTML(song.title||"제목 없음")}</h3>
-
-      <div class="song-meta">
-        BPM ${song.tempo||120}<br>
-        ${song.notes?.length||0}개 음표<br>
-        ${song.handMode==="one"?"한 손":
-          song.handMode==="four"?"포 핸드":"두 손"}
-      </div>
-
-      <div class="toolbar">
-
-        <button class="primary">
-          ▶ 재생
-        </button>
-
-        <button class="secondary">
-          ⬇ 가져오기
-        </button>
-
-      </div>
-    `;
-
-    card.querySelector(".primary")
-      .onclick=()=>startPlayback(song);
-
-    card.querySelector(".secondary")
-      .onclick=()=>loadIntoEditor(song);
-
-    grid.appendChild(card);
-
-  });
-}
-
-
-function loadIntoEditor(song){
-
-  composition={
-    title:song.title||"가져온 음악",
-    instrument:song.instrument||"piano",
-    handMode:song.handMode||"two",
-    tempo:Number(song.tempo)||120,
-    notes:(song.notes||[]).map(n=>({
-      id:n.id||crypto.randomUUID(),
-      note:n.note,
-      start:Number(n.start??0),
-      duration:Number(n.duration??1)
-    }))
-  };
-
-  document.getElementById("songTitle").value=composition.title;
-  document.getElementById("instrument").value=composition.instrument;
-  document.getElementById("handMode").value=composition.handMode;
-  document.getElementById("tempo").value=composition.tempo;
-
-  renderTimeline();
-  renderNoteList();
-
-  showScreen("create");
 }
 
 
 /* =========================================================
-   PLAYBACK
+   SONG GRID
 ========================================================= */
 
-function buildPlaybackPiano(){
+function renderSongGrid(){
 
-  const piano=document.getElementById("playPiano");
+  const grid=
+    document.getElementById(
+      "songGrid"
+    );
+
+
+  grid.innerHTML="";
+
+
+  if(
+    !songsCache.length
+  ){
+
+    grid.innerHTML=
+      `<div class="empty">
+        아직 저장된 음악이 없습니다.
+      </div>`;
+
+    return;
+
+  }
+
+
+  songsCache.forEach(
+    song=>{
+
+      const card=
+        document.createElement(
+          "div"
+        );
+
+
+      card.className=
+        "song-card";
+
+
+      const icon=
+        song.instrument==="violin"
+        ?"🎻"
+        :song.instrument==="guitar"
+        ?"🎸"
+        :song.instrument==="drum"
+        ?"🥁"
+        :"🎹";
+
+
+      card.innerHTML=`
+
+        <h3>
+          ${icon}
+          ${escapeHTML(
+            song.title ||
+            "제목 없음"
+          )}
+        </h3>
+
+        <div class="song-meta">
+
+          BPM ${song.tempo||120}<br>
+
+          ${song.notes?.length||0}
+          개 음표<br>
+
+          ${
+            song.handMode==="one"
+            ?"한 손"
+            :song.handMode==="four"
+            ?"포 핸드"
+            :"두 손"
+          }
+
+        </div>
+
+
+        <div class="toolbar">
+
+          <button class="primary">
+            ▶ 재생
+          </button>
+
+          <button class="secondary">
+            🎼 제작으로 가져오기
+          </button>
+
+        </div>
+
+      `;
+
+
+      card.querySelector(
+        ".primary"
+      ).onclick=
+        ()=>startPlayback(
+          song
+        );
+
+
+      card.querySelector(
+        ".secondary"
+      ).onclick=
+        ()=>{
+
+          loadSongIntoEditor(
+            song
+          );
+
+        };
+
+
+      grid.appendChild(
+        card
+      );
+
+    }
+  );
+
+}
+
+
+function loadSongIntoEditor(
+  song
+){
+
+  composition={
+
+    title:
+      song.title ||
+      "가져온 음악",
+
+    instrument:
+      song.instrument ||
+      "piano",
+
+    handMode:
+      song.handMode ||
+      "two",
+
+    tempo:
+      Number(
+        song.tempo
+      )||120,
+
+    notes:
+      (song.notes||[])
+        .map(
+          note=>({
+
+            id:
+              note.id ||
+              crypto.randomUUID(),
+
+            note:
+              note.note,
+
+            start:
+              Number(
+                note.start ??
+                note.beat ??
+                0
+              ),
+
+            duration:
+              Number(
+                note.duration
+              )||1
+
+          })
+        )
+
+  };
+
+
+  updateEditorForm();
+
+  renderTimeline();
+  renderNoteList();
+
+  showScreen(
+    "create"
+  );
+
+}
+
+
+/* =========================================================
+   PLAYER PIANO
+========================================================= */
+
+function buildPlayerPiano(
+  id
+){
+
+  const piano=
+    document.getElementById(
+      id
+    );
+
 
   piano.innerHTML="";
 
-  ALL_NOTES.forEach(note=>{
 
-    const key=document.createElement("div");
+  ALL_NOTES.forEach(
+    note=>{
 
-    key.className=
-      "player-key"+
-      (note.includes("#") ? " black":"");
+      const key=
+        document.createElement(
+          "div"
+        );
 
-    key.dataset.note=note;
 
-    key.textContent=note;
+      key.className=
+        "player-key"+
+        (
+          note.includes("#")
+          ?" black"
+          :""
+        );
 
-    piano.appendChild(key);
 
-  });
+      key.dataset.note=
+        note;
+
+
+      key.textContent=
+        note;
+
+
+      if(
+        id==="gamePiano"
+      ){
+
+        key.addEventListener(
+          "mousedown",
+          ()=>{
+            gameInput(
+              note
+            );
+          }
+        );
+
+      }
+
+
+      piano.appendChild(
+        key
+      );
+
+    }
+  );
+
 }
 
 
-function buildLanes(container){
+function buildLanes(
+  id
+){
+
+  const container=
+    document.getElementById(
+      id
+    );
+
 
   container.innerHTML="";
 
-  ALL_NOTES.forEach(()=>{
-    const lane=document.createElement("div");
-    lane.className="lane";
-    container.appendChild(lane);
-  });
+
+  for(
+    let i=0;
+    i<ALL_NOTES.length;
+    i++
+  ){
+
+    const lane=
+      document.createElement(
+        "div"
+      );
+
+
+    lane.className=
+      "lane";
+
+
+    container.appendChild(
+      lane
+    );
+
+  }
 
 }
 
 
-function startPlayback(song){
+/* =========================================================
+   PLAYBACK ENGINE
+========================================================= */
+
+function startPlayback(
+  song
+){
 
   stopPlayback();
 
-  if(!song || !song.notes?.length) return;
+
+  if(
+    !song ||
+    !song.notes ||
+    !song.notes.length
+  ){
+
+    alert(
+      "이 음악에는 음표가 없습니다."
+    );
+
+    return;
+
+  }
+
 
   ensureAudio();
 
-  playback.song=song;
+
   playback.active=true;
 
-  const tempo=Number(song.tempo)||120;
+  playback.song=
+    song;
 
-  const beatSec=60/tempo;
+  playback.scheduled=
+    new Set();
 
-  const maxBeat=Math.max(
-    ...song.notes.map(n=>n.start+n.duration)
+
+  const tempo=
+    Number(
+      song.tempo
+    )||120;
+
+
+  const beatSeconds=
+    60/tempo;
+
+
+  const maxBeat=
+    Math.max(
+      ...song.notes.map(
+        note=>
+          Number(note.start)+
+          Number(note.duration)
+      )
+    );
+
+
+  playback.endSeconds=
+    maxBeat*
+    beatSeconds;
+
+
+  /*
+     패널을 먼저 열어준다.
+  */
+
+  document.getElementById(
+    "playbackPanel"
+  ).classList.remove(
+    "hidden"
   );
 
-  playback.endTime=maxBeat*beatSec;
 
-  document.getElementById("playbackPanel")
-    .classList.remove("hidden");
+  document.getElementById(
+    "playTitle"
+  ).textContent=
+    song.title ||
+    "음악";
 
-  document.getElementById("playTitle")
-    .textContent=song.title||"음악";
 
-  document.getElementById("playInstrument")
-    .textContent=
-      song.instrument==="violin"?"🎻 바이올린":
-      song.instrument==="guitar"?"🎸 기타":
-      song.instrument==="drum"?"🥁 드럼":
-      "🎹 피아노";
+  document.getElementById(
+    "playInstrument"
+  ).textContent=
+    song.instrument==="violin"
+    ?"🎻 바이올린"
+    :song.instrument==="guitar"
+    ?"🎸 기타"
+    :song.instrument==="drum"
+    ?"🥁 드럼"
+    :"🎹 피아노";
+
 
   buildLanes(
-    document.getElementById("playLanes")
+    "playLanes"
   );
 
-  buildPlaybackPiano();
+  buildPlayerPiano(
+    "playPiano"
+  );
 
-  playback.startTime=performance.now();
+
+  document.getElementById(
+    "playNotes"
+  ).innerHTML="";
+
+
+  /*
+     첫 음표가 바로 판정선에서
+     시작하지 않도록 8박 정도의
+     이동 공간을 확보.
+  */
+
+  playback.startedAt=
+    performance.now();
+
 
   renderPlayback();
+
+
+  setTimeout(
+    ()=>{
+      document.getElementById(
+        "playbackPanel"
+      ).scrollIntoView({
+        behavior:"smooth",
+        block:"start"
+      });
+    },
+    30
+  );
 
 }
 
 
 function renderPlayback(){
 
-  if(!playback.active) return;
+  if(
+    !playback.active
+  ){
+    return;
+  }
 
-  const song=playback.song;
 
-  const tempo=Number(song.tempo)||120;
-  const beatSec=60/tempo;
+  const song=
+    playback.song;
+
+
+  const stage=
+    document.getElementById(
+      "playStage"
+    );
+
+
+  const layer=
+    document.getElementById(
+      "playNotes"
+    );
+
+
+  /*
+     브라우저가 stage를 아직 측정하지
+     못했다면 다음 프레임에서 다시.
+  */
+
+  if(
+    stage.clientHeight===0 ||
+    stage.clientWidth===0
+  ){
+
+    playback.raf=
+      requestAnimationFrame(
+        renderPlayback
+      );
+
+    return;
+
+  }
+
+
+  const tempo=
+    Number(
+      song.tempo
+    )||120;
+
+
+  const beatSeconds=
+    60/tempo;
+
 
   const elapsed=
-    (performance.now()-playback.startTime)/1000;
+    (
+      performance.now()-
+      playback.startedAt
+    )/1000;
 
-  const currentBeat=elapsed/beatSec;
 
-  const stage=document.getElementById("playStage");
-  const notesLayer=document.getElementById("playNotes");
+  const currentBeat=
+    elapsed/
+    beatSeconds;
 
-  notesLayer.innerHTML="";
 
-  const stageWidth=stage.clientWidth;
-  const laneWidth=stageWidth/ALL_NOTES.length;
+  const stageHeight=
+    stage.clientHeight;
 
-  const hitY=stage.clientHeight-80;
-  const fallBeats=8;
-  const pxPerBeat=hitY/fallBeats;
 
-  song.notes.forEach(note=>{
+  const pianoHeight=82;
 
-    const delta=note.start-currentBeat;
 
-    if(delta < -note.duration || delta > fallBeats){
-      return;
+  const hitY=
+    stageHeight-
+    pianoHeight;
+
+
+  /*
+     8박 동안 위에서 판정선까지
+     이동.
+  */
+
+  const travelBeats=8;
+
+
+  const pixelsPerBeat=
+    hitY/
+    travelBeats;
+
+
+  const laneWidth=
+    stage.clientWidth/
+    ALL_NOTES.length;
+
+
+  /*
+     이전 프레임의 음표를 완전히 지우고
+     현재 위치를 다시 계산.
+  */
+
+  layer.innerHTML="";
+
+
+  song.notes.forEach(
+    note=>{
+
+      const start=
+        Number(
+          note.start
+        );
+
+
+      const duration=
+        Number(
+          note.duration
+        );
+
+
+      const delta=
+        start-
+        currentBeat;
+
+
+      /*
+         화면 위쪽에서 아직 너무 먼 음표
+         또는 이미 지나간 음표는 표시하지 않음.
+      */
+
+      if(
+        delta>travelBeats ||
+        delta<-duration
+      ){
+
+        return;
+
+      }
+
+
+      const block=
+        document.createElement(
+          "div"
+        );
+
+
+      const chord=
+        song.notes.filter(
+          other=>
+            Number(
+              other.start
+            )===start
+        ).length>1;
+
+
+      block.className=
+        "falling-note"+
+        (
+          chord
+          ?" chord"
+          :""
+        );
+
+
+      const index=
+        NOTE_INDEX[
+          note.note
+        ];
+
+
+      if(
+        index===undefined
+      ){
+
+        return;
+
+      }
+
+
+      block.style.left=
+        `${
+          index*
+          laneWidth+
+          1
+        }px`;
+
+
+      block.style.width=
+        `${Math.max(
+          5,
+          laneWidth-2
+        )}px`;
+
+
+      /*
+         긴 음표일수록 긴 블록.
+      */
+
+      block.style.height=
+        `${Math.max(
+          12,
+          duration*
+          pixelsPerBeat
+        )}px`;
+
+
+      /*
+         ★ 핵심 이동 공식
+         
+         delta가 크다
+         → 위
+
+         delta가 줄어든다
+         → 아래
+
+         delta = 0
+         → 판정선
+
+      */
+
+      const y=
+        hitY-
+        delta*
+        pixelsPerBeat-
+        duration*
+        pixelsPerBeat;
+
+
+      block.style.top=
+        `${y}px`;
+
+
+      layer.appendChild(
+        block
+      );
+
+
+      /*
+         소리도 정확히 시작 박자에 맞춰
+         한 번만 재생.
+      */
+
+      if(
+        !playback.scheduled.has(
+          note.id
+        ) &&
+        currentBeat>=start
+      ){
+
+        playback.scheduled.add(
+          note.id
+        );
+
+
+        playTone(
+          note.note,
+          Math.max(
+            .08,
+            duration*
+            beatSeconds
+          ),
+          song.instrument
+        );
+
+      }
+
     }
+  );
 
-    const block=document.createElement("div");
 
-    const same=song.notes.filter(
-      n=>n.start===note.start
-    ).length>1;
+  document.getElementById(
+    "playTime"
+  ).textContent=
+    formatTime(
+      elapsed
+    );
 
-    block.className=
-      "falling-note"+
-      (same?" chord":"");
 
-    const index=NOTE_INDEX[note.note];
-
-    block.style.left=
-      `${index*laneWidth+2}px`;
-
-    block.style.width=
-      `${Math.max(4,laneWidth-4)}px`;
-
-    block.style.height=
-      `${Math.max(12,note.duration*pxPerBeat)}px`;
-
-    const y=
-      hitY-delta*pxPerBeat-note.duration*pxPerBeat;
-
-    block.style.top=`${y}px`;
-
-    notesLayer.appendChild(block);
-
-  });
-
-  document.getElementById("playTime")
-    .textContent=formatTime(elapsed);
-
-  if(elapsed>=playback.endTime+1){
+  if(
+    elapsed>
+    playback.endSeconds+
+    1
+  ){
 
     stopPlayback();
 
     return;
+
   }
 
-  playback.animation=
-    requestAnimationFrame(renderPlayback);
+
+  playback.raf=
+    requestAnimationFrame(
+      renderPlayback
+    );
 
 }
 
 
-window.stopPlayback=function(){
+window.stopPlayback=
+function(){
 
-  if(playback.animation){
-    cancelAnimationFrame(playback.animation);
+  if(
+    playback.raf
+  ){
+
+    cancelAnimationFrame(
+      playback.raf
+    );
+
   }
 
-  playback.animation=null;
+
+  playback.raf=null;
+
   playback.active=false;
+
   playback.song=null;
 
-  const layer=document.getElementById("playNotes");
+  playback.scheduled.clear();
 
-  if(layer) layer.innerHTML="";
+
+  const notes=
+    document.getElementById(
+      "playNotes"
+    );
+
+
+  if(notes){
+    notes.innerHTML="";
+  }
+
+
+  const panel=
+    document.getElementById(
+      "playbackPanel"
+    );
+
+
+  if(panel){
+
+    panel.classList.add(
+      "hidden"
+    );
+
+  }
 
 };
 
 
 /* =========================================================
-   GAME
+   GAME SONGS
 ========================================================= */
 
 function loadGameSongs(){
 
-  const select=document.getElementById("gameSong");
+  const select=
+    document.getElementById(
+      "gameSong"
+    );
 
-  if(!select) return;
+
+  if(!select){
+    return;
+  }
+
 
   select.innerHTML="";
 
-  songsCache.forEach((song,index)=>{
 
-    const option=document.createElement("option");
+  if(
+    !songsCache.length
+  ){
 
-    option.value=index;
+    select.innerHTML=
+      `<option value="">
+        저장된 음악 없음
+      </option>`;
 
-    option.textContent=
-      song.title||`음악 ${index+1}`;
+    return;
 
-    select.appendChild(option);
-
-  });
-
-  if(songsCache.length){
-    updateLeaderboard();
   }
+
+
+  songsCache.forEach(
+    (song,index)=>{
+
+      const option=
+        document.createElement(
+          "option"
+        );
+
+
+      option.value=
+        index;
+
+
+      option.textContent=
+        song.title ||
+        `음악 ${index+1}`;
+
+
+      select.appendChild(
+        option
+      );
+
+    }
+  );
+
+
+  updateLeaderboard();
+
 }
 
 
-function buildGamePiano(){
+/* =========================================================
+   GAME START
+========================================================= */
 
-  const piano=document.getElementById("gamePiano");
-
-  piano.innerHTML="";
-
-  ALL_NOTES.forEach(note=>{
-
-    const key=document.createElement("div");
-
-    key.className=
-      "player-key"+
-      (note.includes("#")?" black":"");
-
-    key.dataset.note=note;
-
-    key.textContent=note;
-
-    key.addEventListener("mousedown",()=>{
-      gameInput(note);
-    });
-
-    piano.appendChild(key);
-
-  });
-}
-
-
-function startGame(){
+window.startGame=
+function(){
 
   stopGame();
 
-  const index=
-    Number(document.getElementById("gameSong").value);
 
-  const song=songsCache[index];
+  const select=
+    document.getElementById(
+      "gameSong"
+    );
+
+
+  const index=
+    Number(
+      select.value
+    );
+
+
+  const song=
+    songsCache[index];
+
 
   if(!song){
-    alert("플레이할 음악이 없습니다.");
+
+    alert(
+      "플레이할 음악을 선택해주세요."
+    );
+
     return;
+
   }
 
-  if(!song.notes?.length){
-    alert("이 음악에는 음표가 없습니다.");
+
+  if(
+    !song.notes ||
+    !song.notes.length
+  ){
+
+    alert(
+      "이 음악에는 플레이할 음표가 없습니다."
+    );
+
     return;
+
   }
+
 
   ensureAudio();
 
-  game.song=song;
+
+  game.song=
+    song;
+
   game.active=true;
+
   game.score=0;
+
   game.combo=0;
+
   game.hits=0;
+
   game.misses=0;
+
   game.judged=0;
-  game.hitNotes=new Set();
 
-  const tempo=Number(song.tempo)||120;
+  game.hitNotes=
+    new Set();
 
-  const maxBeat=Math.max(
-    ...song.notes.map(n=>n.start+n.duration)
+
+  const tempo=
+    Number(
+      song.tempo
+    )||120;
+
+
+  const beatSeconds=
+    60/tempo;
+
+
+  const maxBeat=
+    Math.max(
+      ...song.notes.map(
+        note=>
+          Number(note.start)+
+          Number(note.duration)
+      )
+    );
+
+
+  game.totalSeconds=
+    maxBeat*
+    beatSeconds+
+    2;
+
+
+  /*
+     ★ 가장 중요한 부분
+     
+     게임 시작 전에 반드시
+     hidden을 제거한다.
+  */
+
+  const panel=
+    document.getElementById(
+      "gamePanel"
+    );
+
+
+  panel.classList.remove(
+    "hidden"
   );
 
-  game.totalDuration=
-    maxBeat*(60/tempo)+2;
 
-  document.getElementById("gamePanel")
-    .classList.remove("hidden");
+  document.getElementById(
+    "gameTitle"
+  ).textContent=
+    song.title ||
+    "Music Game";
 
-  document.getElementById("gameTitle")
-    .textContent=song.title;
 
   buildLanes(
-    document.getElementById("gameLanes")
+    "gameLanes"
   );
 
-  buildGamePiano();
+
+  buildPlayerPiano(
+    "gamePiano"
+  );
+
+
+  document.getElementById(
+    "gameNotes"
+  ).innerHTML="";
+
 
   updateGameStats();
 
-  game.startTime=
-    performance.now()+1000;
+
+  /*
+     렌더링 시작.
+  */
+
+  game.startedAt=
+    performance.now();
+
 
   renderGame();
 
-}
 
+  /*
+     게임창으로 이동.
+  */
+
+  setTimeout(
+    ()=>{
+      panel.scrollIntoView({
+        behavior:"smooth",
+        block:"start"
+      });
+    },
+    50
+  );
+
+};
+
+
+/* =========================================================
+   GAME RENDER
+========================================================= */
 
 function renderGame(){
 
-  if(!game.active) return;
+  if(
+    !game.active
+  ){
+    return;
+  }
 
-  const song=game.song;
 
-  const tempo=Number(song.tempo)||120;
-  const beatSec=60/tempo;
+  const song=
+    game.song;
+
+
+  const stage=
+    document.getElementById(
+      "gameStage"
+    );
+
+
+  const layer=
+    document.getElementById(
+      "gameNotes"
+    );
+
+
+  if(
+    stage.clientWidth===0 ||
+    stage.clientHeight===0
+  ){
+
+    game.raf=
+      requestAnimationFrame(
+        renderGame
+      );
+
+    return;
+
+  }
+
+
+  const tempo=
+    Number(
+      song.tempo
+    )||120;
+
+
+  const beatSeconds=
+    60/tempo;
+
 
   const elapsed=
-    (performance.now()-game.startTime)/1000;
+    (
+      performance.now()-
+      game.startedAt
+    )/1000;
 
-  const currentBeat=elapsed/beatSec;
 
-  const stage=document.getElementById("gameStage");
-  const layer=document.getElementById("gameNotes");
+  const currentBeat=
+    elapsed/
+    beatSeconds;
+
+
+  const hitY=
+    stage.clientHeight-
+    82;
+
+
+  const travelBeats=8;
+
+
+  const pixelsPerBeat=
+    hitY/
+    travelBeats;
+
+
+  const laneWidth=
+    stage.clientWidth/
+    ALL_NOTES.length;
+
 
   layer.innerHTML="";
 
-  const stageWidth=stage.clientWidth;
-  const laneWidth=stageWidth/ALL_NOTES.length;
 
-  const hitY=stage.clientHeight-80;
+  song.notes.forEach(
+    note=>{
 
-  const fallBeats=7;
+      if(
+        game.hitNotes.has(
+          note.id
+        )
+      ){
+        return;
+      }
 
-  const pxPerBeat=
-    hitY/fallBeats;
+
+      const start=
+        Number(
+          note.start
+        );
 
 
-  song.notes.forEach((note,index)=>{
+      const duration=
+        Number(
+          note.duration
+        );
 
-    const delta=note.start-currentBeat;
 
-    if(delta < -1 || delta > fallBeats){
-      return;
+      const delta=
+        start-
+        currentBeat;
+
+
+      if(
+        delta>travelBeats ||
+        delta<-duration
+      ){
+
+        return;
+
+      }
+
+
+      const index=
+        NOTE_INDEX[
+          note.note
+        ];
+
+
+      if(
+        index===undefined
+      ){
+        return;
+      }
+
+
+      const block=
+        document.createElement(
+          "div"
+        );
+
+
+      const chord=
+        song.notes.filter(
+          other=>
+            Number(
+              other.start
+            )===start
+        ).length>1;
+
+
+      block.className=
+        "falling-note"+
+        (
+          chord
+          ?" chord"
+          :""
+        );
+
+
+      block.style.left=
+        `${
+          index*
+          laneWidth+
+          1
+        }px`;
+
+
+      block.style.width=
+        `${Math.max(
+          5,
+          laneWidth-2
+        )}px`;
+
+
+      block.style.height=
+        `${Math.max(
+          12,
+          duration*
+          pixelsPerBeat
+        )}px`;
+
+
+      const y=
+        hitY-
+        delta*
+        pixelsPerBeat-
+        duration*
+        pixelsPerBeat;
+
+
+      block.style.top=
+        `${y}px`;
+
+
+      layer.appendChild(
+        block
+      );
+
     }
-
-    if(game.hitNotes.has(note.id)){
-      return;
-    }
-
-    const block=document.createElement("div");
-
-    const same=
-      song.notes.filter(
-        n=>n.start===note.start
-      ).length>1;
-
-    block.className=
-      "falling-note"+
-      (same?" chord":"");
-
-    const noteIndex=NOTE_INDEX[note.note];
-
-    block.style.left=
-      `${noteIndex*laneWidth+1}px`;
-
-    block.style.width=
-      `${Math.max(5,laneWidth-2)}px`;
-
-    block.style.height=
-      `${Math.max(12,note.duration*pxPerBeat)}px`;
-
-    const y=
-      hitY-delta*pxPerBeat-note.duration*pxPerBeat;
-
-    block.style.top=`${y}px`;
-
-    layer.appendChild(block);
-
-  });
-
-
-  const progress=Math.min(
-    100,
-    Math.max(0,
-      elapsed/game.totalDuration*100
-    )
   );
 
-  document.getElementById("gameProgress")
-    .textContent=Math.round(progress)+"%";
+
+  /*
+     지나간 음표 MISS
+  */
+
+  const range=
+    Number(
+      document.getElementById(
+        "judgeRange"
+      ).value
+    );
 
 
-  if(elapsed>=game.totalDuration){
+  song.notes.forEach(
+    note=>{
+
+      if(
+        game.hitNotes.has(
+          note.id
+        )
+      ){
+        return;
+      }
+
+
+      if(
+        currentBeat>
+        Number(
+          note.start
+        )+
+        range
+      ){
+
+        game.hitNotes.add(
+          note.id
+        );
+
+        game.misses++;
+
+        game.judged++;
+
+        game.combo=0;
+
+      }
+
+    }
+  );
+
+
+  updateGameStats();
+
+
+  const progress=
+    Math.min(
+      100,
+      Math.max(
+        0,
+        elapsed/
+        game.totalSeconds*
+        100
+      )
+    );
+
+
+  document.getElementById(
+    "gameProgress"
+  ).textContent=
+    `${Math.round(progress)}%`;
+
+
+  if(
+    elapsed>=
+    game.totalSeconds
+  ){
 
     finishGame();
 
     return;
+
   }
 
 
-  game.animation=
-    requestAnimationFrame(renderGame);
+  game.raf=
+    requestAnimationFrame(
+      renderGame
+    );
 
 }
 
 
-function gameInput(note){
+/* =========================================================
+   GAME INPUT
+========================================================= */
 
-  if(!game.active) return;
+function gameInput(
+  note
+){
 
-  ensureAudio();
+  if(
+    !game.active
+  ){
+    return;
+  }
+
 
   playTone(
     note,
-    .2,
+    .18,
     game.song.instrument
   );
 
-  flashGameKey(note);
 
-  const tempo=Number(game.song.tempo)||120;
+  flashGameKey(
+    note
+  );
 
-  const beatSec=60/tempo;
+
+  const tempo=
+    Number(
+      game.song.tempo
+    )||120;
+
+
+  const beatSeconds=
+    60/tempo;
+
 
   const elapsed=
-    (performance.now()-game.startTime)/1000;
+    (
+      performance.now()-
+      game.startedAt
+    )/1000;
 
-  const currentBeat=elapsed/beatSec;
+
+  const currentBeat=
+    elapsed/
+    beatSeconds;
+
 
   const range=
-    Number(document.getElementById("judgeRange").value);
+    Number(
+      document.getElementById(
+        "judgeRange"
+      ).value
+    );
+
 
   let target=null;
+
   let best=Infinity;
 
-  game.song.notes.forEach(n=>{
 
-    if(game.hitNotes.has(n.id)) return;
+  game.song.notes
+    .forEach(
+      noteData=>{
 
-    if(n.note!==note) return;
+        if(
+          game.hitNotes.has(
+            noteData.id
+          )
+        ){
+          return;
+        }
 
-    const diff=Math.abs(n.start-currentBeat);
 
-    if(diff<=range && diff<best){
-      best=diff;
-      target=n;
-    }
+        if(
+          noteData.note!==note
+        ){
+          return;
+        }
 
-  });
+
+        const difference=
+          Math.abs(
+            Number(
+              noteData.start
+            )-
+            currentBeat
+          );
+
+
+        if(
+          difference<=range &&
+          difference<best
+        ){
+
+          best=
+            difference;
+
+          target=
+            noteData;
+
+        }
+
+      }
+    );
 
 
   if(target){
 
-    game.hitNotes.add(target.id);
+    game.hitNotes.add(
+      target.id
+    );
 
     game.hits++;
+
     game.judged++;
 
-    let text="GOOD!";
+
     let points=50;
 
-    if(best<=.08){
-      text="PERFECT!";
+    let text="GOOD!";
+
+
+    if(
+      best<=.07
+    ){
+
       points=100;
-    }else if(best<=.16){
-      text="GREAT!";
+      text="PERFECT!";
+
+    }else if(
+      best<=.15
+    ){
+
       points=75;
+      text="GREAT!";
+
     }
 
-    game.score+=points+game.combo*5;
+
+    game.score+=
+      points+
+      game.combo*5;
+
+
     game.combo++;
 
-    showJudge(text);
+
+    showJudge(
+      text
+    );
 
   }else{
 
     game.misses++;
+
     game.judged++;
+
     game.combo=0;
 
-    showJudge("MISS");
+    showJudge(
+      "MISS"
+    );
 
   }
 
+
   updateGameStats();
+
 }
 
 
-function flashGameKey(note){
+function flashGameKey(
+  note
+){
 
   const key=
     document.querySelector(
       `#gamePiano .player-key[data-note="${note}"]`
     );
 
-  if(!key) return;
 
-  key.classList.add("active");
+  if(!key){
+    return;
+  }
 
-  setTimeout(()=>{
-    key.classList.remove("active");
-  },100);
+
+  key.classList.add(
+    "active"
+  );
+
+
+  setTimeout(
+    ()=>{
+      key.classList.remove(
+        "active"
+      );
+    },
+    100
+  );
+
 }
 
 
-function showJudge(text){
+function showJudge(
+  text
+){
 
-  const result=
-    document.getElementById("judgeResult");
+  const element=
+    document.getElementById(
+      "judgeResult"
+    );
 
-  result.textContent=text;
 
-  result.classList.remove("show");
+  element.textContent=
+    text;
 
-  void result.offsetWidth;
 
-  result.classList.add("show");
+  element.classList.remove(
+    "show"
+  );
+
+
+  void element.offsetWidth;
+
+
+  element.classList.add(
+    "show"
+  );
 
 }
 
 
 function updateGameStats(){
 
-  document.getElementById("gameScore")
-    .textContent=game.score;
+  document.getElementById(
+    "gameScore"
+  ).textContent=
+    game.score;
 
-  document.getElementById("gameCombo")
-    .textContent=game.combo;
+
+  document.getElementById(
+    "gameCombo"
+  ).textContent=
+    game.combo;
+
 
   const accuracy=
     game.judged
-      ? Math.round(game.hits/game.judged*100)
-      : 100;
+    ?Math.round(
+      game.hits/
+      game.judged*
+      100
+    )
+    :100;
 
-  document.getElementById("gameAccuracy")
-    .textContent=accuracy+"%";
-}
 
-
-function finishGame(){
-
-  if(!game.active) return;
-
-  game.active=false;
-
-  if(game.animation){
-    cancelAnimationFrame(game.animation);
-  }
-
-  game.animation=null;
-
-  updateGameStats();
-
-  saveGameScore();
-
-  alert(
-    `플레이 종료!\n\n점수: ${game.score}\n정확도: ${document.getElementById("gameAccuracy").textContent}`
-  );
+  document.getElementById(
+    "gameAccuracy"
+  ).textContent=
+    `${accuracy}%`;
 
 }
 
 
-window.stopGame=function(){
+/* =========================================================
+   STOP GAME
+========================================================= */
 
-  if(game.animation){
-    cancelAnimationFrame(game.animation);
+window.stopGame=
+function(){
+
+  if(
+    game.raf
+  ){
+
+    cancelAnimationFrame(
+      game.raf
+    );
+
   }
 
-  game.animation=null;
+
+  game.raf=null;
+
   game.active=false;
 
-  const layer=document.getElementById("gameNotes");
+  game.song=null;
 
-  if(layer) layer.innerHTML="";
+  game.hitNotes.clear();
+
+
+  const layer=
+    document.getElementById(
+      "gameNotes"
+    );
+
+
+  if(layer){
+    layer.innerHTML="";
+  }
 
 };
 
 
 /* =========================================================
-   GAME KEYBOARD
+   FINISH GAME
 ========================================================= */
 
-document.addEventListener("keydown",event=>{
+function finishGame(){
 
-  if(event.repeat) return;
-
-  const note=KEYBOARD_MAP[event.key.toLowerCase()];
-
-  if(!note) return;
-
-  if(game.active){
-    gameInput(note);
+  if(
+    !game.active
+  ){
+    return;
   }
 
-});
+
+  game.active=false;
+
+
+  if(
+    game.raf
+  ){
+
+    cancelAnimationFrame(
+      game.raf
+    );
+
+  }
+
+
+  game.raf=null;
+
+
+  updateGameStats();
+
+
+  saveGameScore();
+
+
+  setTimeout(
+    ()=>{
+      alert(
+        "플레이 종료!\n\n"+
+        `점수: ${game.score}\n`+
+        `정확도: ${
+          document.getElementById(
+            "gameAccuracy"
+          ).textContent
+        }`
+      );
+    },
+    50
+  );
+
+}
+
+
+/* =========================================================
+   KEYBOARD
+========================================================= */
+
+document.addEventListener(
+  "keydown",
+  event=>{
+
+    if(
+      event.repeat
+    ){
+      return;
+    }
+
+
+    const note=
+      KEYBOARD_MAP[
+        event.key.toLowerCase()
+      ];
+
+
+    if(
+      note &&
+      game.active
+    ){
+
+      gameInput(
+        note
+      );
+
+    }
+
+  }
+);
+
+
+/* =========================================================
+   LEADERBOARD SAVE
+========================================================= */
+
+async function saveGameScore(){
+
+  if(
+    !firebaseReady ||
+    !authReady ||
+    !currentUser ||
+    !game.song
+  ){
+    return;
+  }
+
+
+  try{
+
+    const scoreRef=
+      push(
+        ref(
+          db,
+          `${MUSIC_ROOT}/scores/`+
+          `${game.song.songId}`
+        )
+      );
+
+
+    await set(
+      scoreRef,
+      {
+
+        uid:
+          currentUser.uid,
+
+        nickname:
+          "Anonymous",
+
+        score:
+          game.score,
+
+        accuracy:
+          Number(
+            document
+              .getElementById(
+                "gameAccuracy"
+              )
+              .textContent
+              .replace(
+                "%",
+                ""
+              )
+          ),
+
+        createdAt:
+          Date.now()
+
+      }
+    );
+
+
+    updateLeaderboard();
+
+  }catch(error){
+
+    console.warn(
+      "Score save:",
+      error
+    );
+
+  }
+
+}
 
 
 /* =========================================================
    LEADERBOARD
 ========================================================= */
 
-async function saveGameScore(){
-
-  if(!currentUser || !game.song) return;
-
-  try{
-
-    const scoreRef=push(
-      ref(
-        db,
-        `${MUSIC_ROOT}/scores/${game.song.songId}`
-      )
-    );
-
-    await set(scoreRef,{
-      uid:currentUser.uid,
-      nickname:"Anonymous",
-      score:game.score,
-      accuracy:Number(
-        document.getElementById("gameAccuracy")
-          .textContent.replace("%","")
-      ),
-      createdAt:Date.now()
-    });
-
-    updateLeaderboard();
-
-  }catch(e){
-
-    console.warn("score save error",e);
-
-  }
-
-}
-
-
 async function updateLeaderboard(){
 
   const box=
-    document.getElementById("leaderboard");
+    document.getElementById(
+      "leaderboard"
+    );
 
-  if(!box) return;
 
-  const index=
-    Number(document.getElementById("gameSong")?.value);
-
-  const song=songsCache[index];
-
-  if(!song){
-
-    box.innerHTML=
-      "곡을 선택하면 리더보드가 표시됩니다.";
-
+  if(!box){
     return;
   }
+
+
+  const select=
+    document.getElementById(
+      "gameSong"
+    );
+
+
+  if(
+    !select ||
+    !songsCache.length
+  ){
+    return;
+  }
+
+
+  const song=
+    songsCache[
+      Number(
+        select.value
+      )
+    ];
+
+
+  if(!song){
+    return;
+  }
+
 
   if(!song.songId){
 
     box.innerHTML=
-      "이 곡은 아직 Firebase 곡 ID가 없습니다.";
+      "이 음악에는 Firebase ID가 없습니다.";
 
     return;
+
   }
+
 
   try{
 
-    const snapshot=await get(
-      query(
-        ref(
-          db,
-          `${MUSIC_ROOT}/scores/${song.songId}`
-        ),
-        orderByChild("score"),
-        limitToLast(20)
-      )
-    );
+    const snapshot=
+      await get(
+        query(
+          ref(
+            db,
+            `${MUSIC_ROOT}/scores/`+
+            `${song.songId}`
+          ),
+          orderByChild("score"),
+          limitToLast(20)
+        )
+      );
+
 
     const scores=[];
 
-    if(snapshot.exists()){
 
-      snapshot.forEach(child=>{
-        scores.push(child.val());
-      });
+    if(
+      snapshot.exists()
+    ){
+
+      snapshot.forEach(
+        child=>{
+          scores.push(
+            child.val()
+          );
+        }
+      );
 
     }
 
+
     scores.sort(
-      (a,b)=>(b.score||0)-(a.score||0)
+      (a,b)=>
+        (b.score||0)-
+        (a.score||0)
     );
 
-    if(!scores.length){
+
+    if(
+      !scores.length
+    ){
 
       box.innerHTML=
         `<div class="empty">
@@ -2506,122 +4899,250 @@ async function updateLeaderboard(){
         </div>`;
 
       return;
+
     }
+
 
     box.innerHTML="";
 
-    scores.forEach((score,index)=>{
 
-      const row=document.createElement("div");
+    scores.forEach(
+      (score,index)=>{
 
-      row.className="note-row";
+        const row=
+          document.createElement(
+            "div"
+          );
 
-      row.innerHTML=`
-        <span>
-          <b>${index+1}위</b>
-          · ${escapeHTML(score.nickname||"Anonymous")}
-        </span>
 
-        <span>
-          ${score.score||0}점
-          · ${score.accuracy||0}%
-        </span>
-      `;
+        row.className=
+          "note-row";
 
-      box.appendChild(row);
 
-    });
+        row.innerHTML=`
 
-  }catch(e){
+          <span>
+            <b>${index+1}위</b>
+            · ${
+              escapeHTML(
+                score.nickname||
+                "Anonymous"
+              )
+            }
+          </span>
 
-    console.warn(e);
+          <span>
+            ${score.score||0}점
+            · ${score.accuracy||0}%
+          </span>
+
+        `;
+
+
+        box.appendChild(
+          row
+        );
+
+      }
+    );
+
+  }catch(error){
+
+    console.warn(error);
 
     box.innerHTML=
       `<div class="empty">
-        리더보드를 불러올 수 없습니다.
+        리더보드를 불러오지 못했습니다.
       </div>`;
 
   }
+
 }
 
 
-document.getElementById("gameSong")
-  .addEventListener("change",updateLeaderboard);
+document.getElementById(
+  "gameSong"
+).addEventListener(
+  "change",
+  updateLeaderboard
+);
 
 
 /* =========================================================
-   HELPERS
+   FORM
 ========================================================= */
 
-function formatTime(seconds){
-
-  seconds=Math.max(0,seconds);
-
-  const min=Math.floor(seconds/60);
-
-  const sec=Math.floor(seconds%60)
-    .toString()
-    .padStart(2,"0");
-
-  return `${min}:${sec}`;
-}
+document.getElementById(
+  "songTitle"
+).addEventListener(
+  "input",
+  event=>{
+    composition.title=
+      event.target.value;
+  }
+);
 
 
-function escapeHTML(str){
+document.getElementById(
+  "instrument"
+).addEventListener(
+  "change",
+  event=>{
+    composition.instrument=
+      event.target.value;
+  }
+);
 
-  return String(str)
-    .replaceAll("&","&amp;")
-    .replaceAll("<","&lt;")
-    .replaceAll(">","&gt;")
-    .replaceAll('"',"&quot;")
-    .replaceAll("'","&#039;");
-}
+
+document.getElementById(
+  "handMode"
+).addEventListener(
+  "change",
+  event=>{
+    composition.handMode=
+      event.target.value;
+  }
+);
 
 
-/* =========================================================
-   INIT
-========================================================= */
-
-document.getElementById("songTitle")
-  .addEventListener("input",e=>{
-    composition.title=e.target.value;
-  });
-
-document.getElementById("instrument")
-  .addEventListener("change",e=>{
-    composition.instrument=e.target.value;
-  });
-
-document.getElementById("handMode")
-  .addEventListener("change",e=>{
-    composition.handMode=e.target.value;
-  });
-
-document.getElementById("tempo")
-  .addEventListener("input",e=>{
+document.getElementById(
+  "tempo"
+).addEventListener(
+  "input",
+  event=>{
     composition.tempo=
-      Math.max(30,Math.min(300,Number(e.target.value)||120));
-  });
+      Math.max(
+        30,
+        Math.min(
+          300,
+          Number(
+            event.target.value
+          )||120
+        )
+      );
+  }
+);
 
+
+/* =========================================================
+   HELPER
+========================================================= */
+
+function formatTime(
+  seconds
+){
+
+  seconds=Math.max(
+    0,
+    seconds
+  );
+
+
+  const minutes=
+    Math.floor(
+      seconds/60
+    );
+
+
+  const sec=
+    Math.floor(
+      seconds%60
+    )
+    .toString()
+    .padStart(
+      2,
+      "0"
+    );
+
+
+  return `${minutes}:${sec}`;
+
+}
+
+
+function escapeHTML(
+  value
+){
+
+  return String(value)
+    .replaceAll(
+      "&",
+      "&amp;"
+    )
+    .replaceAll(
+      "<",
+      "&lt;"
+    )
+    .replaceAll(
+      ">",
+      "&gt;"
+    )
+    .replaceAll(
+      '"',
+      "&quot;"
+    )
+    .replaceAll(
+      "'",
+      "&#039;"
+    );
+
+}
+
+
+/* =========================================================
+   PAGE EXIT
+========================================================= */
+
+window.addEventListener(
+  "beforeunload",
+  ()=>{
+
+    stopPlayback();
+
+    stopGame();
+
+
+    if(audioContext){
+
+      audioContext
+        .close()
+        .catch(
+          ()=>{}
+        );
+
+    }
+
+  }
+);
+
+
+/* =========================================================
+   INITIAL START
+========================================================= */
 
 buildEditorPiano();
-buildPlaybackPiano();
-loadSongs();
 
+buildPlayerPiano(
+  "playPiano"
+);
 
-/* =========================================================
-   IMPORTANT:
-   페이지 이동 / 새로고침 / 브라우저 종료 시 재생 중지
-========================================================= */
+buildPlayerPiano(
+  "gamePiano"
+);
 
-window.addEventListener("beforeunload",()=>{
-  stopPlayback();
-  stopGame();
+buildLanes(
+  "playLanes"
+);
 
-  if(audioContext){
-    audioContext.close().catch(()=>{});
-  }
-});
+buildLanes(
+  "gameLanes"
+);
+
+renderTimeline();
+
+renderNoteList();
+
+initFirebase();
 
 </script>
 
