@@ -1,4 +1,4 @@
-```html
+Hey Guys! Since this thing is Beta Testing, I hope you understand its bad feature!
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -534,5 +534,1089 @@ button{
   <div class="panel editor">
     <div class="piano-editor">
       <div class="pitch-labels" id="pitchLabels"></div>
-      <div class="note-
-```
+      <div class="note-grid" id="noteGrid"></div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h3 style="margin-top:0">🎹 입력 키보드</h3>
+    <div class="piano" id="editorPiano"></div>
+  </div>
+
+</section>
+
+
+<!-- LIBRARY -->
+<section id="library" class="screen">
+  <div class="top-title">
+    <button class="back" data-screen="home">←</button>
+    <div>
+      <h2>▶️ 음악 재생</h2>
+      <div style="color:var(--muted);font-size:13px">게임 없이 음악을 감상합니다.</div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="toolbar">
+      <button class="secondary" id="refreshSongs">새로고침</button>
+      <button class="secondary" id="loadMySongs">내 노래</button>
+      <button class="secondary" id="loadPublicSongs">공개 노래</button>
+    </div>
+    <div id="libraryList" class="library-list"></div>
+  </div>
+</section>
+
+
+<!-- PLAY LIBRARY -->
+<section id="playLibrary" class="screen">
+  <div class="top-title">
+    <button class="back" data-screen="home">←</button>
+    <div>
+      <h2>🎮 음악 플레이</h2>
+      <div style="color:var(--muted);font-size:13px">곡을 선택하고 직접 연주하세요.</div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div id="playLibraryList" class="library-list"></div>
+  </div>
+</section>
+
+
+<!-- VIEW PLAYER -->
+<section id="viewer" class="screen">
+  <div class="top-title">
+    <button class="back" data-screen="library">←</button>
+    <div>
+      <h2 id="viewerTitle">음악 재생</h2>
+      <div id="viewerMeta" style="color:var(--muted);font-size:13px"></div>
+    </div>
+  </div>
+
+  <div class="player" id="viewerPlayer">
+    <div class="player-info">
+      <h2 id="viewerSongName"></h2>
+      <span>자동 연주</span>
+    </div>
+    <div class="lane-wrap">
+      <div class="lane" id="viewerLane"></div>
+    </div>
+    <div class="hit-line"></div>
+    <div class="play-keys" id="viewerKeys"></div>
+  </div>
+
+  <div class="player-controls">
+    <button class="primary" id="viewerPlay">▶ 재생</button>
+    <button class="secondary" id="viewerStop">■ 정지</button>
+  </div>
+</section>
+
+
+<!-- GAME -->
+<section id="game" class="screen">
+  <div class="top-title">
+    <button class="back" data-screen="playLibrary">←</button>
+    <div>
+      <h2 id="gameTitle">음악 플레이</h2>
+      <div id="gameMeta" style="color:var(--muted);font-size:13px"></div>
+    </div>
+  </div>
+
+  <div class="player" id="gamePlayer">
+    <div class="player-info">
+      <h2 id="gameSongName"></h2>
+      <span id="gameStatus">준비하세요!</span>
+    </div>
+
+    <div class="lane-wrap">
+      <div class="lane" id="gameLane"></div>
+      <div id="fallingNotes"></div>
+    </div>
+
+    <div class="hit-line"></div>
+    <div class="play-keys" id="gameKeys"></div>
+  </div>
+
+  <div class="player-controls">
+    <button class="primary" id="startGame">▶ 게임 시작</button>
+    <button class="secondary" id="restartGame">↻ 다시 시작</button>
+
+    <div class="score-box">
+      <span>점수 <strong id="gameScore">0</strong></span>
+      <span>콤보 <strong id="gameCombo">0</strong></span>
+      <span>정확도 <strong id="gameAccuracy">100%</strong></span>
+    </div>
+  </div>
+
+  <div class="panel" style="margin-top:14px">
+    <h3 style="margin-top:0">🏆 이 곡의 리더보드</h3>
+    <div id="gameLeaderboard"></div>
+  </div>
+</section>
+
+</main>
+
+
+<script type="module">
+
+/* =========================================================
+   FIREBASE
+========================================================= */
+
+import { initializeApp }
+  from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import {
+  getDatabase,
+  ref,
+  push,
+  set,
+  get,
+  query,
+  orderByChild,
+  limitToLast
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+import {
+  getAuth,
+  signInAnonymously,
+  onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBreTSe1m0-xlbF4aupnU5isRZCihR25IE",
+  authDomain: "formwheel.firebaseapp.com",
+  databaseURL: "https://formwheel-default-rtdb.firebaseio.com",
+  projectId: "formwheel",
+  storageBucket: "formwheel.firebasestorage.app",
+  messagingSenderId: "431583088241",
+  appId: "1:431583088241:web:74e0e34ea1e3e1170c55d0",
+  measurementId: "G-T372YXDF8D"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+const auth = getAuth(app);
+
+let currentUser = null;
+
+signInAnonymously(auth).catch(err=>{
+  console.warn("Anonymous auth:",err);
+});
+
+onAuthStateChanged(auth,user=>{
+  currentUser=user;
+  document.getElementById("firebaseStatus").textContent =
+    user ? "● Firebase 연결됨" : "Firebase 연결 준비 중...";
+});
+
+
+/* =========================================================
+   GLOBAL STATE
+========================================================= */
+
+const MUSIC_ROOT = "formwheelMusic";
+
+const state = {
+  notes: [],
+  currentBeat: 0,
+  selectedSong: null,
+  viewerTimer: null,
+  gameTimer: null,
+  gameRunning: false,
+  gameStartTime: 0,
+  gameScore: 0,
+  combo: 0,
+  maxCombo: 0,
+  hits: 0,
+  misses: 0,
+  judged: new Set(),
+  activeGameNotes: []
+};
+
+
+/* =========================================================
+   BASIC HELPERS
+========================================================= */
+
+const $ = id => document.getElementById(id);
+
+function uid(){
+  return currentUser?.uid || "guest";
+}
+
+function clamp(v,min,max){
+  return Math.max(min,Math.min(max,v));
+}
+
+function escapeHtml(str){
+  return String(str ?? "")
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;");
+}
+
+function songData(){
+  return {
+    title: $("songTitle").value.trim() || "이름 없는 곡",
+    instrument: $("instrument").value,
+    handMode: $("handMode").value,
+    tempo: clamp(Number($("tempo").value)||100,40,240),
+    notes: state.notes.map(n=>({...n})),
+    owner: uid(),
+    ownerName: "FormWheel User",
+    updatedAt: Date.now(),
+    version: 1
+  };
+}
+
+
+/* =========================================================
+   SCREEN NAVIGATION
+========================================================= */
+
+function showScreen(id){
+  document.querySelectorAll(".screen").forEach(x=>x.classList.remove("active"));
+  $(id).classList.add("active");
+
+  if(id==="library"){
+    loadSongs("public");
+  }
+
+  if(id==="playLibrary"){
+    loadPlaySongs();
+  }
+}
+
+document.addEventListener("click",e=>{
+  const btn=e.target.closest("[data-screen]");
+  if(!btn) return;
+  showScreen(btn.dataset.screen);
+});
+
+
+/* =========================================================
+   PIANO
+========================================================= */
+
+const pianoNotes = [
+  "C4","C#4","D4","D#4","E4","F4","F#4","G4",
+  "G#4","A4","A#4","B4","C5","C#5","D5","D#5"
+];
+
+const noteNames = {
+  "C4":"도","C#4":"도#","D4":"레","D#4":"레#",
+  "E4":"미","F4":"파","F#4":"파#","G4":"솔",
+  "G#4":"솔#","A4":"라","A#4":"라#","B4":"시",
+  "C5":"도","C#5":"도#","D5":"레","D#5":"레#"
+};
+
+function renderPiano(){
+  const piano=$("editorPiano");
+  piano.innerHTML="";
+
+  pianoNotes.forEach((note,i)=>{
+    const key=document.createElement("button");
+    key.type="button";
+    key.className="key";
+    key.dataset.note=note;
+    key.textContent=noteNames[note];
+
+    if(note.includes("#")){
+      key.classList.add("black");
+    }
+
+    key.addEventListener("click",()=>{
+      playTone(note);
+      addNote(note);
+      key.classList.add("active");
+      setTimeout(()=>key.classList.remove("active"),100);
+    });
+
+    piano.appendChild(key);
+  });
+
+  renderPlayKeys($("gameKeys"));
+  renderPlayKeys($("viewerKeys"));
+}
+
+function renderPlayKeys(root){
+  root.innerHTML="";
+  pianoNotes.slice(0,8).forEach((note,i)=>{
+    const b=document.createElement("button");
+    b.className="play-key";
+    b.textContent=noteNames[note];
+    b.dataset.note=note;
+    b.addEventListener("pointerdown",()=>{
+      b.classList.add("hit");
+      setTimeout(()=>b.classList.remove("hit"),100);
+      handleGameInput(note);
+    });
+    root.appendChild(b);
+  });
+}
+
+
+/* =========================================================
+   SIMPLE SYNTH
+========================================================= */
+
+let audioCtx=null;
+
+function getAudio(){
+  if(!audioCtx){
+    audioCtx=new (window.AudioContext||window.webkitAudioContext)();
+  }
+  if(audioCtx.state==="suspended") audioCtx.resume();
+  return audioCtx;
+}
+
+function freq(note){
+  const m=note.match(/^([A-G])(#?)(\d)$/);
+  if(!m) return 440;
+
+  const semitone={
+    C:-9,D:-7,E:-5,F:-4,G:-2,A:0,B:2
+  }[m[1]] + (m[2]?1:0);
+
+  return 440*Math.pow(2,(semitone + (Number(m[3])-4)*12)/12);
+}
+
+function playTone(note,duration=.28){
+  const ctx=getAudio();
+  const osc=ctx.createOscillator();
+  const gain=ctx.createGain();
+
+  osc.frequency.value=freq(note);
+  osc.type="sine";
+
+  gain.gain.setValueAtTime(.0001,ctx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(.18,ctx.currentTime+.015);
+  gain.gain.exponentialRampToValueAtTime(.0001,ctx.currentTime+duration);
+
+  osc.connect(gain);
+  gain.connect(ctx.destination);
+
+  osc.start();
+  osc.stop(ctx.currentTime+duration+.03);
+}
+
+
+/* =========================================================
+   SCORE EDITOR
+========================================================= */
+
+function addNote(note){
+  const item={
+    id:crypto.randomUUID(),
+    note,
+    beat:state.currentBeat,
+    duration:1
+  };
+
+  state.notes.push(item);
+  state.currentBeat++;
+  renderScore();
+}
+
+function renderScore(){
+  const labels=$("pitchLabels");
+  const grid=$("noteGrid");
+
+  labels.innerHTML="";
+  grid.innerHTML="";
+
+  pianoNotes.slice().reverse().forEach(note=>{
+    const l=document.createElement("div");
+    l.className="pitch-label";
+    l.textContent=noteNames[note];
+    labels.appendChild(l);
+
+    const row=document.createElement("div");
+    row.className="grid-row";
+    grid.appendChild(row);
+  });
+
+  const indexMap={};
+  pianoNotes.slice().reverse().forEach((n,i)=>indexMap[n]=i);
+
+  state.notes.forEach(n=>{
+    const el=document.createElement("button");
+    el.className="note";
+    el.type="button";
+    el.textContent=noteNames[n.note];
+    el.style.left=(n.beat*80+5)+"px";
+    el.style.top=(indexMap[n.note]*48+6)+"px";
+    el.title="클릭하면 삭제";
+
+    el.addEventListener("click",()=>{
+      state.notes=state.notes.filter(x=>x.id!==n.id);
+      renderScore();
+    });
+
+    grid.appendChild(el);
+  });
+
+  grid.style.height=(pianoNotes.length*48)+"px";
+  grid.style.width=Math.max(800,(state.notes.length+4)*80)+"px";
+}
+
+$("clearNotes").addEventListener("click",()=>{
+  state.notes=[];
+  state.currentBeat=0;
+  renderScore();
+});
+
+$("undoNote").addEventListener("click",()=>{
+  state.notes.pop();
+  state.currentBeat=Math.max(0,state.currentBeat-1);
+  renderScore();
+});
+
+
+/* =========================================================
+   EXPORT / IMPORT
+========================================================= */
+
+$("exportSong").addEventListener("click",()=>{
+  const data=JSON.stringify(songData(),null,2);
+  const blob=new Blob([data],{type:"application/json"});
+  const url=URL.createObjectURL(blob);
+
+  const a=document.createElement("a");
+  a.href=url;
+  a.download=(songData().title||"formwheel-song")+".json";
+  a.click();
+
+  URL.revokeObjectURL(url);
+});
+
+$("importSongBtn").addEventListener("click",()=>{
+  $("importSong").click();
+});
+
+$("importSong").addEventListener("change",async e=>{
+  const file=e.target.files?.[0];
+  if(!file) return;
+
+  try{
+    const obj=JSON.parse(await file.text());
+
+    $("songTitle").value=obj.title||"가져온 곡";
+    $("instrument").value=obj.instrument||"piano";
+    $("handMode").value=obj.handMode||"one";
+    $("tempo").value=obj.tempo||100;
+
+    state.notes=Array.isArray(obj.notes)?obj.notes:[];
+    state.currentBeat=state.notes.length;
+
+    renderScore();
+    alert("곡을 가져왔습니다!");
+  }catch(err){
+    alert("올바른 Formwheel_Music 곡 파일이 아닙니다.");
+  }
+
+  e.target.value="";
+});
+
+
+/* =========================================================
+   FIREBASE SONG SAVE
+========================================================= */
+
+$("saveSong").addEventListener("click",async()=>{
+  if(!currentUser){
+    alert("Firebase 연결을 기다려주세요.");
+    return;
+  }
+
+  if(!state.notes.length){
+    alert("먼저 음을 하나 이상 추가해주세요.");
+    return;
+  }
+
+  try{
+    const song=songData();
+    const newRef=push(ref(db,`${MUSIC_ROOT}/songs`));
+
+    await set(newRef,{
+      ...song,
+      songId:newRef.key,
+      public:true
+    });
+
+    alert("곡이 Firebase에 저장되었습니다!");
+  }catch(err){
+    console.error(err);
+    alert("저장에 실패했습니다. Firebase Database 규칙을 확인해주세요.");
+  }
+});
+
+
+/* =========================================================
+   SONG LIBRARY
+========================================================= */
+
+async function getSongs(){
+  try{
+    const snap=await get(ref(db,`${MUSIC_ROOT}/songs`));
+    if(!snap.exists()) return [];
+
+    const data=snap.val();
+
+    return Object.values(data)
+      .filter(Boolean)
+      .sort((a,b)=>(b.updatedAt||0)-(a.updatedAt||0));
+  }catch(err){
+    console.error(err);
+    return [];
+  }
+}
+
+function songCard(song,mode){
+  const div=document.createElement("div");
+  div.className="song-card";
+
+  const instrumentName={
+    piano:"🎹 피아노",
+    violin:"🎻 바이올린",
+    drum:"🥁 드럼",
+    guitar:"🎸 기타"
+  }[song.instrument]||"🎵 악기";
+
+  const handName={
+    one:"원핸드",
+    two:"투핸드",
+    four:"포핸드"
+  }[song.handMode]||"원핸드";
+
+  div.innerHTML=`
+    <h3>${escapeHtml(song.title)}</h3>
+    <div class="song-meta">
+      ${instrumentName} · ${handName} · ${song.tempo||100} BPM ·
+      ${(song.notes||[]).length} notes
+    </div>
+    <div class="song-actions">
+      <button class="primary playSong">
+        ${mode==="game"?"🎮 플레이":"▶ 재생"}
+      </button>
+      <button class="secondary downloadSong">파일 저장</button>
+    </div>
+  `;
+
+  div.querySelector(".playSong").addEventListener("click",()=>{
+    state.selectedSong=song;
+
+    if(mode==="game"){
+      openGame(song);
+    }else{
+      openViewer(song);
+    }
+  });
+
+  div.querySelector(".downloadSong").addEventListener("click",()=>{
+    downloadSong(song);
+  });
+
+  return div;
+}
+
+function downloadSong(song){
+  const blob=new Blob(
+    [JSON.stringify(song,null,2)],
+    {type:"application/json"}
+  );
+
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  a.href=url;
+  a.download=(song.title||"song")+".json";
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+async function loadSongs(){
+  const list=$("libraryList");
+  list.innerHTML=`<div class="empty">노래를 불러오는 중...</div>`;
+
+  const songs=await getSongs();
+
+  list.innerHTML="";
+
+  if(!songs.length){
+    list.innerHTML=`<div class="empty">아직 공개된 노래가 없습니다.</div>`;
+    return;
+  }
+
+  songs.forEach(song=>{
+    list.appendChild(songCard(song,"view"));
+  });
+}
+
+async function loadPlaySongs(){
+  const list=$("playLibraryList");
+  list.innerHTML=`<div class="empty">노래를 불러오는 중...</div>`;
+
+  const songs=await getSongs();
+
+  list.innerHTML="";
+
+  if(!songs.length){
+    list.innerHTML=`<div class="empty">플레이할 노래가 없습니다.</div>`;
+    return;
+  }
+
+  songs.forEach(song=>{
+    list.appendChild(songCard(song,"game"));
+  });
+}
+
+$("refreshSongs").addEventListener("click",loadSongs);
+$("loadMySongs").addEventListener("click",async()=>{
+  const songs=(await getSongs()).filter(s=>s.owner===uid());
+  const list=$("libraryList");
+
+  list.innerHTML="";
+  if(!songs.length){
+    list.innerHTML=`<div class="empty">내가 만든 노래가 없습니다.</div>`;
+    return;
+  }
+
+  songs.forEach(song=>list.appendChild(songCard(song,"view")));
+});
+
+$("loadPublicSongs").addEventListener("click",loadSongs);
+
+
+/* =========================================================
+   SYNTHESIA VIEWER
+========================================================= */
+
+function setupLane(root){
+  root.innerHTML="";
+  for(let i=0;i<8;i++){
+    const line=document.createElement("div");
+    line.className="lane-line";
+    root.appendChild(line);
+  }
+}
+
+function openViewer(song){
+  showScreen("viewer");
+
+  $("viewerSongName").textContent=song.title;
+  $("viewerTitle").textContent="▶️ 음악 재생";
+  $("viewerMeta").textContent=
+    `${song.tempo||100} BPM · ${song.notes.length} notes`;
+
+  setupLane($("viewerLane"));
+
+  stopViewer();
+}
+
+function stopViewer(){
+  if(state.viewerTimer){
+    clearInterval(state.viewerTimer);
+    state.viewerTimer=null;
+  }
+}
+
+$("viewerStop").addEventListener("click",stopViewer);
+
+$("viewerPlay").addEventListener("click",()=>{
+  const song=state.selectedSong;
+  if(!song) return;
+
+  stopViewer();
+
+  const notes=[...song.notes].sort((a,b)=>a.beat-b.beat);
+  const beatMs=60000/(song.tempo||100);
+  const start=performance.now();
+
+  state.viewerTimer=setInterval(()=>{
+    const elapsed=performance.now()-start;
+    const beat=elapsed/beatMs;
+
+    notes.forEach(n=>{
+      if(Math.abs(n.beat-beat)<.08){
+        playTone(n.note,.3);
+      }
+    });
+
+    if(beat>=(Math.max(...notes.map(n=>n.beat),0)+2)){
+      stopViewer();
+    }
+  },25);
+});
+
+
+/* =========================================================
+   GAME
+========================================================= */
+
+function openGame(song){
+  showScreen("game");
+
+  $("gameTitle").textContent="🎮 음악 플레이";
+  $("gameSongName").textContent=song.title;
+  $("gameMeta").textContent=
+    `${song.tempo||100} BPM · ${song.handMode||"one"} · ${song.notes.length} notes`;
+
+  setupLane($("gameLane"));
+  resetGame();
+  loadLeaderboard(song);
+}
+
+function resetGame(){
+  if(state.gameTimer){
+    cancelAnimationFrame(state.gameTimer);
+    state.gameTimer=null;
+  }
+
+  state.gameRunning=false;
+  state.gameScore=0;
+  state.combo=0;
+  state.maxCombo=0;
+  state.hits=0;
+  state.misses=0;
+  state.judged=new Set();
+  state.activeGameNotes=[];
+
+  $("fallingNotes").innerHTML="";
+  updateGameUI();
+}
+
+function updateGameUI(){
+  $("gameScore").textContent=Math.round(state.gameScore);
+  $("gameCombo").textContent=state.combo;
+
+  const total=state.hits+state.misses;
+  const accuracy=total?Math.round(state.hits/total*100):100;
+  $("gameAccuracy").textContent=accuracy+"%";
+}
+
+$("restartGame").addEventListener("click",()=>{
+  if(state.selectedSong) openGame(state.selectedSong);
+});
+
+$("startGame").addEventListener("click",()=>{
+  if(!state.selectedSong) return;
+  startGame(state.selectedSong);
+});
+
+function startGame(song){
+  resetGame();
+
+  state.gameRunning=true;
+  state.gameStartTime=performance.now();
+
+  $("gameStatus").textContent="연주 중!";
+
+  const notes=[...song.notes].sort((a,b)=>a.beat-b.beat);
+  const beatMs=60000/(song.tempo||100);
+  const duration=Math.max(...notes.map(n=>n.beat),0)*beatMs+1500;
+
+  function frame(now){
+    if(!state.gameRunning) return;
+
+    const elapsed=now-state.gameStartTime;
+    const currentBeat=elapsed/beatMs;
+
+    renderFallingNotes(song,currentBeat);
+
+    notes.forEach(n=>{
+      if(state.judged.has(n.id)) return;
+
+      const diff=n.beat-currentBeat;
+
+      if(diff < -.55){
+        state.judged.add(n.id);
+        state.misses++;
+        state.combo=0;
+        updateGameUI();
+      }
+    });
+
+    if(elapsed<duration+900){
+      state.gameTimer=requestAnimationFrame(frame);
+    }else{
+      finishGame(song);
+    }
+  }
+
+  state.gameTimer=requestAnimationFrame(frame);
+}
+
+function renderFallingNotes(song,currentBeat){
+  const root=$("fallingNotes");
+
+  root.innerHTML="";
+
+  const notes=song.notes||[];
+  const visible=notes.filter(n=>{
+    const d=n.beat-currentBeat;
+    return d>-1 && d<5;
+  });
+
+  visible.forEach(n=>{
+    if(state.judged.has(n.id)) return;
+
+    const el=document.createElement("div");
+    el.className="falling";
+
+    const laneIndex=Math.max(0,pianoNotes.indexOf(n.note));
+    const x=(laneIndex/8)*100;
+
+    const distance=n.beat-currentBeat;
+    const y=380-distance*75;
+
+    el.style.left=x+"%";
+    el.style.bottom=(110+y)+"px";
+
+    root.appendChild(el);
+  });
+}
+
+function handleGameInput(note){
+  if(!state.gameRunning || !state.selectedSong) return;
+
+  const song=state.selectedSong;
+  const beatMs=60000/(song.tempo||100);
+  const currentBeat=(performance.now()-state.gameStartTime)/beatMs;
+
+  let target=null;
+  let best=Infinity;
+
+  song.notes.forEach(n=>{
+    if(state.judged.has(n.id)) return;
+    if(n.note!==note) return;
+
+    const diff=Math.abs(n.beat-currentBeat);
+
+    if(diff<best){
+      best=diff;
+      target=n;
+    }
+  });
+
+  if(!target) return;
+
+  if(best<=.18){
+    state.judged.add(target.id);
+    state.hits++;
+
+    let points=100;
+    let label="GOOD";
+
+    if(best<=.055){
+      points=300;
+      label="PERFECT";
+    }else if(best<=.11){
+      points=180;
+      label="GREAT";
+    }
+
+    state.combo++;
+    state.maxCombo=Math.max(state.maxCombo,state.combo);
+    state.gameScore+=points+state.combo*2;
+
+    playTone(note,.22);
+    showJudge(label);
+    updateGameUI();
+  }
+}
+
+function showJudge(text){
+  const old=document.querySelector(".judge-popup");
+  if(old) old.remove();
+
+  const el=document.createElement("div");
+  el.className="judge-popup";
+  el.textContent=text;
+
+  Object.assign(el.style,{
+    position:"absolute",
+    left:"50%",
+    top:"46%",
+    transform:"translate(-50%,-50%)",
+    zIndex:"20",
+    fontSize:"30px",
+    fontWeight:"900",
+    color:"#fff",
+    textShadow:"0 3px 16px rgba(0,0,0,.4)",
+    pointerEvents:"none"
+  });
+
+  $("gamePlayer").appendChild(el);
+
+  setTimeout(()=>el.remove(),380);
+}
+
+async function finishGame(song){
+  state.gameRunning=false;
+
+  const total=state.hits+state.misses;
+  const accuracy=total?
+    Math.round(state.hits/total*100):100;
+
+  $("gameStatus").textContent=
+    `완료! ${accuracy}% · 최고 콤보 ${state.maxCombo}`;
+
+  await saveScore(song,state.gameScore,accuracy,state.maxCombo);
+  await loadLeaderboard(song);
+}
+
+
+/* =========================================================
+   LEADERBOARD
+========================================================= */
+
+async function saveScore(song,score,accuracy,maxCombo){
+  if(!currentUser) return;
+
+  const scoreRef=push(ref(db,
+    `${MUSIC_ROOT}/scores/${song.songId||"local"}`
+  ));
+
+  await set(scoreRef,{
+    uid:uid(),
+    nickname:"FormWheel User",
+    score:Math.round(score),
+    accuracy,
+    maxCombo,
+    createdAt:Date.now()
+  }).catch(console.error);
+}
+
+async function loadLeaderboard(song){
+  const root=$("gameLeaderboard");
+  root.innerHTML=`<div class="empty">리더보드를 불러오는 중...</div>`;
+
+  if(!song.songId){
+    root.innerHTML=`<div class="empty">Firebase에 저장된 곡에서 리더보드를 사용할 수 있습니다.</div>`;
+    return;
+  }
+
+  try{
+    const snap=await get(
+      query(
+        ref(db,`${MUSIC_ROOT}/scores/${song.songId}`),
+        orderByChild("score"),
+        limitToLast(20)
+      )
+    );
+
+    if(!snap.exists()){
+      root.innerHTML=`<div class="empty">아직 기록이 없습니다.</div>`;
+      return;
+    }
+
+    const rows=Object.values(snap.val())
+      .sort((a,b)=>(b.score||0)-(a.score||0))
+      .slice(0,20);
+
+    const table=document.createElement("table");
+    table.className="leaderboard";
+
+    table.innerHTML=`
+      <thead>
+        <tr>
+          <th>순위</th>
+          <th>플레이어</th>
+          <th>점수</th>
+          <th>정확도</th>
+          <th>최고 콤보</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${rows.map((r,i)=>`
+          <tr>
+            <td class="rank">${i+1}</td>
+            <td>${escapeHtml(r.nickname||"User")}</td>
+            <td>${Math.round(r.score||0)}</td>
+            <td>${r.accuracy||0}%</td>
+            <td>${r.maxCombo||0}</td>
+          </tr>
+        `).join("")}
+      </tbody>
+    `;
+
+    root.innerHTML="";
+    root.appendChild(table);
+
+  }catch(err){
+    console.error(err);
+    root.innerHTML=
+      `<div class="empty">리더보드를 불러오지 못했습니다.</div>`;
+  }
+}
+
+
+/* =========================================================
+   KEYBOARD CONTROL
+========================================================= */
+
+const keyboardMap={
+  a:"C4",
+  w:"C#4",
+  s:"D4",
+  e:"D#4",
+  d:"E4",
+  f:"F4",
+  t:"F#4",
+  g:"G4",
+  y:"G#4",
+  h:"A4",
+  u:"A#4",
+  j:"B4",
+  k:"C5",
+  o:"C#5",
+  l:"D5",
+  p:"D#5"
+};
+
+window.addEventListener("keydown",e=>{
+  if(e.repeat) return;
+
+  const note=keyboardMap[e.key.toLowerCase()];
+  if(!note) return;
+
+  const key=document.querySelector(
+    `.key[data-note="${note}"]`
+  );
+
+  if(key){
+    key.classList.add("active");
+    setTimeout(()=>key.classList.remove("active"),100);
+  }
+
+  playTone(note);
+
+  const currentScreen=
+    document.querySelector(".screen.active")?.id;
+
+  if(currentScreen==="creator"){
+    addNote(note);
+  }
+
+  if(currentScreen==="game"){
+    handleGameInput(note);
+  }
+});
+
+
+/* =========================================================
+   INITIALIZE
+========================================================= */
+
+renderPiano();
+renderScore();
+
+$("firebaseStatus").textContent="Firebase 연결 중...";
+
+</script>
+
+</body>
+</html>
