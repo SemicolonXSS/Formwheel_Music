@@ -2312,8 +2312,12 @@ function(){
 
       }
 
-      return NOTE_INDEX[a.note]-
-        NOTE_INDEX[b.note];
+      if((a.type||"note")!==(b.type||"note")){
+        return (a.type||"note")==="rest" ? -1 : 1;
+      }
+
+      return (NOTE_INDEX[a.note] ?? 0)-
+        (NOTE_INDEX[b.note] ?? 0);
 
     }
   );
@@ -3485,7 +3489,7 @@ function buildLanes(
    PLAYBACK ENGINE
 ========================================================= */
 
-function startPlayback(
+async function startPlayback(
   song
 ){
 
