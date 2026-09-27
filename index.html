@@ -922,6 +922,13 @@ main{
 
 <button
   class="secondary"
+  onclick="addRest()"
+>
+🤫 쉼표 삽입
+</button>
+
+<button
+  class="secondary"
   onclick="clearSelectedKeys()"
 >
 선택 해제
@@ -960,6 +967,11 @@ JSON 가져오기
 
 </label>
 
+<label class="secondary">
+🎵 MP3 가져오기
+<input id="mp3File" type="file" accept="audio/mpeg,audio/mp3,.mp3" hidden>
+</label>
+
 <button
   class="primary"
   onclick="saveCurrentSong()"
@@ -973,7 +985,9 @@ JSON 가져오기
 <div class="info">
 
 같은 시작 박자에 여러 음을 선택해서 추가하면
-자동으로 <b>화음</b>으로 처리됩니다.
+자동으로 <b>화음</b>으로 처리됩니다.<br>
+<b>Enter</b> 키를 누르면 선택한 음이 바로 삽입됩니다.
+쉼표는 <b>🤫 쉼표 삽입</b> 버튼으로 추가할 수 있습니다.
 
 </div>
 
@@ -1030,6 +1044,9 @@ C3 ~ B5 · 36음
 
 </div>
 
+
+<div id="mp3Status" class="empty" style="margin-top:12px;display:none"></div>
+<audio id="mp3Preview" controls style="width:100%;margin-top:12px;display:none"></audio>
 
 <div
   id="noteList"
@@ -1369,6 +1386,14 @@ import {
 "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
 import {
+  getStorage,
+  ref as storageRef,
+  uploadBytes,
+  getDownloadURL
+} from
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
+
+import {
   getAuth,
   signInAnonymously,
   onAuthStateChanged
@@ -1410,6 +1435,7 @@ const MUSIC_ROOT =
 
 
 let db=null;
+let storage=null;
 let auth=null;
 let currentUser=null;
 
@@ -1655,7 +1681,12 @@ let composition={
 
   tempo:120,
 
-  notes:[]
+  notes:[],
+
+  audioUrl:"",
+  audioName:"",
+  audioDuration:0,
+  audioFile:null
 
 };
 
@@ -2217,6 +2248,8 @@ function(){
           id:
             crypto.randomUUID(),
 
+          type:"note",
+
           note,
 
           start,
@@ -2269,196 +2302,122 @@ function(){
 };
 
 
+window.addRest=
+function(){
+
+  const start=
+    Number(
+      document.getElementById(
+        "startBeat"
+      ).value
+    )||0;
+
+  const duration=
+    Number(
+      document.getElementById(
+        "duration"
+      ).value
+    )||1;
+
+  composition.notes.push({
+    id:crypto.randomUUID(),
+    type:"rest",
+    start,
+    duration
+  });
+
+  composition.notes.sort((a,b)=>{
+    if(a.start!==b.start) return a.start-b.start;
+    if((a.type||"note")!==(b.type||"note")){
+      return (a.type||"note")==="rest" ? -1 : 1;
+    }
+    return (NOTE_INDEX[a.note] ?? 0) - (NOTE_INDEX[b.note] ?? 0);
+  });
+
+  if(document.getElementById("advanceMode").value==="duration"){
+    document.getElementById("startBeat").value=start+duration;
+  }
+
+  renderTimeline();
+  renderNoteList();
+};
+
+
 /* =========================================================
    TIMELINE
 ========================================================= */
 
 function renderTimeline(){
 
-  const timeline=
-    document.getElementById(
-      "timeline"
-    );
+  const timeline=document.getElementById("timeline");
 
+  timeline.querySelectorAll(".note-block").forEach(node=>node.remove());
 
-  timeline
-    .querySelectorAll(
-      ".note-block"
-    )
-    .forEach(
-      node=>node.remove()
-    );
+  const maxBeat=Math.max(16,...composition.notes.map(item=>Number(item.start)+Number(item.duration)));
 
+  timeline.style.width=`${Math.max(1200,maxBeat*55+100)}px`;
 
-  const maxBeat=
-    Math.max(
-      16,
-      ...composition.notes.map(
-        note=>
-          note.start+
-          note.duration
-      )
-    );
+  composition.notes.forEach(item=>{
+    const block=document.createElement("div");
+    const isRest=item.type==="rest";
 
+    if(isRest){
+      block.className="note-block rest";
+      block.style.left=`${item.start*55}px`;
+      block.style.width=`${Math.max(40,item.duration*55-4)}px`;
+      block.textContent="🤫 쉼표";
+      timeline.appendChild(block);
+      return;
+    }
 
-  timeline.style.width=
-    `${Math.max(
-      1200,
-      maxBeat*55+100
-    )}px`;
+    const chord=composition.notes.filter(n=>n.type!=="rest" && n.start===item.start).length>1;
+    block.className="note-block"+(chord?" chord":"");
+    block.style.left=`${item.start*55}px`;
+    block.style.top=`${260-(NOTE_INDEX[item.note]??0)*5}px`;
+    block.style.width=`${Math.max(25,item.duration*55-4)}px`;
+    block.textContent=item.note;
+    timeline.appendChild(block);
+  });
 
-
-  composition.notes
-    .forEach(
-      note=>{
-
-        const block=
-          document.createElement(
-            "div"
-          );
-
-
-        const chord=
-          composition.notes.filter(
-            n=>
-              n.start===note.start
-          ).length>1;
-
-
-        block.className=
-          "note-block"+
-          (
-            chord
-            ?" chord"
-            :""
-          );
-
-
-        block.style.left=
-          `${note.start*55}px`;
-
-
-        block.style.top=
-          `${260-NOTE_INDEX[note.note]*5}px`;
-
-
-        block.style.width=
-          `${Math.max(
-            25,
-            note.duration*55-4
-          )}px`;
-
-
-        block.textContent=
-          note.note;
-
-
-        timeline.appendChild(
-          block
-        );
-
-      }
-    );
-
-
-  document.getElementById(
-    "noteCount"
-  ).textContent=
-    `${composition.notes.length}개 음표`;
-
+  document.getElementById("noteCount").textContent=`${composition.notes.length}개 항목`;
 }
-
 
 function renderNoteList(){
 
-  const list=
-    document.getElementById(
-      "noteList"
-    );
-
-
+  const list=document.getElementById("noteList");
   list.innerHTML="";
 
-
-  if(
-    !composition.notes.length
-  ){
-
-    list.innerHTML=
-      `<div class="empty">
-        아직 음표가 없습니다.
-      </div>`;
-
+  if(!composition.notes.length){
+    list.innerHTML=`<div class="empty">아직 음표가 없습니다.</div>`;
     return;
   }
 
+  composition.notes.forEach((item,index)=>{
+    const row=document.createElement("div");
+    row.className="note-row";
 
-  composition.notes
-    .forEach(
-      (note,index)=>{
+    const name=item.duration===.5?"8분음표"
+      :item.duration===1?"4분음표"
+      :item.duration===1.5?"점4분음표"
+      :item.duration===2?"2분음표"
+      :item.duration===4?"온음표"
+      :`${item.duration}박`;
 
-        const row=
-          document.createElement(
-            "div"
-          );
+    const label=item.type==="rest"
+      ? `🤫 <b>쉼표</b> · ${item.start}박 · ${name}`
+      : `<b>${escapeHTML(item.note||"")}</b> · ${item.start}박 · ${name}`;
 
+    row.innerHTML=`<span>${index+1}. ${label}</span><button class="secondary">삭제</button>`;
 
-        row.className=
-          "note-row";
+    row.querySelector("button").onclick=()=>{
+      composition.notes.splice(index,1);
+      renderTimeline();
+      renderNoteList();
+    };
 
-
-        const name=
-          note.duration===.5
-          ?"8분음표"
-          :note.duration===1
-          ?"4분음표"
-          :note.duration===1.5
-          ?"점4분음표"
-          :note.duration===2
-          ?"2분음표"
-          :note.duration===4
-          ?"온음표"
-          :`${note.duration}박`;
-
-
-        row.innerHTML=`
-
-          <span>
-            ${index+1}.
-            <b>${note.note}</b>
-            · ${note.start}박
-            · ${name}
-          </span>
-
-          <button class="secondary">
-            삭제
-          </button>
-
-        `;
-
-
-        row.querySelector(
-          "button"
-        ).onclick=()=>{
-
-          composition.notes
-            .splice(index,1);
-
-          renderTimeline();
-          renderNoteList();
-
-        };
-
-
-        list.appendChild(
-          row
-        );
-
-      }
-    );
-
+    list.appendChild(row);
+  });
 }
-
 
 window.undoLast=
 function(){
@@ -2514,7 +2473,7 @@ function(){
 
   const data={
 
-    version:2,
+    version:3,
 
     title:
       composition.title,
@@ -2638,6 +2597,9 @@ document.getElementById(
                   note.id ||
                   crypto.randomUUID(),
 
+                type:
+                  note.type === "rest" ? "rest" : "note",
+
                 note:
                   note.note,
 
@@ -2715,8 +2677,58 @@ function updateEditorForm(){
   ).value=
     composition.tempo;
 
+  updateMP3UI();
+
 }
 
+
+/* =========================================================
+   MP3
+========================================================= */
+
+function updateMP3UI(){
+  const status=document.getElementById("mp3Status");
+  const preview=document.getElementById("mp3Preview");
+  if(!status || !preview) return;
+  if(composition.audioUrl){
+    status.style.display="block";
+    status.textContent=`🎵 ${composition.audioName || "MP3"}가 연결되어 있습니다.`;
+    preview.src=composition.audioUrl;
+    preview.style.display="block";
+  }else if(composition.audioFile){
+    status.style.display="block";
+    status.textContent=`🎵 ${composition.audioName || composition.audioFile.name} (저장 시 Firebase Storage에 업로드됩니다)`;
+    preview.style.display="block";
+  }else{
+    status.style.display="none";
+    preview.removeAttribute("src");
+    preview.style.display="none";
+  }
+}
+
+const mp3Input=document.getElementById("mp3File");
+if(mp3Input){
+  mp3Input.addEventListener("change",event=>{
+    const file=event.target.files[0];
+    if(!file) return;
+    if(!file.type.startsWith("audio/") && !/\.mp3$/i.test(file.name)){
+      alert("MP3 파일을 선택해주세요.");
+      return;
+    }
+    composition.audioFile=file;
+    composition.audioUrl="";
+    composition.audioName=file.name;
+    const preview=document.getElementById("mp3Preview");
+    const status=document.getElementById("mp3Status");
+    preview.src=URL.createObjectURL(file);
+    preview.style.display="block";
+    status.style.display="block";
+    status.textContent=`🎵 ${file.name} (저장 시 Firebase Storage에 업로드됩니다)`;
+    preview.onloadedmetadata=()=>{
+      composition.audioDuration=Number(preview.duration)||0;
+    };
+  });
+}
 
 /* =========================================================
    SAVE
@@ -2771,11 +2783,13 @@ async function(){
 
 
   if(
-    !composition.notes.length
+    !composition.notes.length &&
+    !composition.audioFile &&
+    !composition.audioUrl
   ){
 
     alert(
-      "먼저 음악을 만들어주세요."
+      "음표를 만들거나 MP3를 가져와주세요."
     );
 
     return;
@@ -2783,6 +2797,21 @@ async function(){
 
 
   try{
+
+    let audioUrl=composition.audioUrl || "";
+    let audioName=composition.audioName || "";
+    let audioDuration=Number(composition.audioDuration)||0;
+
+    if(composition.audioFile){
+      if(!storage) throw new Error("Firebase Storage가 초기화되지 않았습니다.");
+      const safeName=composition.audioFile.name.replace(/[^a-zA-Z0-9._-]/g,"_");
+      const fileRef=storageRef(storage,`${MUSIC_ROOT}/audio/${currentUser.uid}/${Date.now()}_${safeName}`);
+      const uploaded=await uploadBytes(fileRef,composition.audioFile,{contentType:composition.audioFile.type||"audio/mpeg"});
+      audioUrl=await getDownloadURL(uploaded.ref);
+      composition.audioUrl=audioUrl;
+      composition.audioName=audioName;
+      composition.audioFile=null;
+    }
 
     const songRef=
       push(
@@ -2818,6 +2847,12 @@ async function(){
         notes:
           composition.notes,
 
+        audioUrl,
+
+        audioName,
+
+        audioDuration,
+
         owner:
           currentUser.uid,
 
@@ -2826,7 +2861,7 @@ async function(){
         updatedAt:
           Date.now(),
 
-        version:2
+        version:3
 
       }
     );
@@ -3075,6 +3110,7 @@ function renderSongGrid(){
 
         <div class="song-meta">
 
+          ${song.audioUrl ? "🎵 MP3 포함<br>" : ""}
           BPM ${song.tempo||120}<br>
 
           ${song.notes?.length||0}
@@ -3137,7 +3173,7 @@ function renderSongGrid(){
 
 
 function loadSongIntoEditor(
-  song
+song
 ){
 
   composition={
@@ -3168,6 +3204,9 @@ function loadSongIntoEditor(
               note.id ||
               crypto.randomUUID(),
 
+            type:
+              note.type === "rest" ? "rest" : "note",
+
             note:
               note.note,
 
@@ -3184,7 +3223,18 @@ function loadSongIntoEditor(
               )||1
 
           })
-        )
+        ),
+
+    audioUrl:
+      song.audioUrl || "",
+
+    audioName:
+      song.audioName || "",
+
+    audioDuration:
+      Number(song.audioDuration)||0,
+
+    audioFile:null
 
   };
 
@@ -3199,7 +3249,6 @@ function loadSongIntoEditor(
   );
 
 }
-
 
 /* =========================================================
    PLAYER PIANO
@@ -3319,22 +3368,24 @@ function startPlayback(
   stopPlayback();
 
 
-  if(
-    !song ||
-    !song.notes ||
-    !song.notes.length
-  ){
-
-    alert(
-      "이 음악에는 음표가 없습니다."
-    );
-
+  if(!song || (!song.notes?.length && !song.audioUrl)){
+    alert("재생할 음표 또는 MP3가 없습니다.");
     return;
-
   }
 
-
   ensureAudio();
+
+  if(window.currentMP3){
+    window.currentMP3.pause();
+    window.currentMP3.currentTime=0;
+  }
+
+  if(song.audioUrl){
+    const audio=new Audio(song.audioUrl);
+    audio.preload="auto";
+    window.currentMP3=audio;
+    audio.play().catch(err=>console.warn("MP3 재생:",err));
+  }
 
 
   playback.active=true;
@@ -3357,13 +3408,13 @@ function startPlayback(
 
 
   const maxBeat=
-    Math.max(
+    song.notes?.length ? Math.max(
       ...song.notes.map(
         note=>
           Number(note.start)+
           Number(note.duration)
       )
-    );
+    ) : 0;
 
 
   playback.endSeconds=
@@ -3548,8 +3599,12 @@ function renderPlayback(){
   layer.innerHTML="";
 
 
-  song.notes.forEach(
+  (song.notes||[]).forEach(
     note=>{
+
+      if(note.type==="rest"){
+        return;
+      }
 
       const start=
         Number(
@@ -3592,9 +3647,8 @@ function renderPlayback(){
       const chord=
         song.notes.filter(
           other=>
-            Number(
-              other.start
-            )===start
+            other.type!=="rest" &&
+            Number(other.start)===start
         ).length>1;
 
 
@@ -3761,6 +3815,12 @@ function(){
   playback.active=false;
 
   playback.song=null;
+
+  if(window.currentMP3){
+    window.currentMP3.pause();
+    window.currentMP3.currentTime=0;
+    window.currentMP3=null;
+  }
 
   playback.scheduled.clear();
 
@@ -4118,6 +4178,10 @@ function renderGame(){
   song.notes.forEach(
     note=>{
 
+      if(note.type==="rest"){
+        return;
+      }
+
       if(
         game.hitNotes.has(
           note.id
@@ -4176,9 +4240,8 @@ function renderGame(){
       const chord=
         song.notes.filter(
           other=>
-            Number(
-              other.start
-            )===start
+            other.type!=="rest" &&
+            Number(other.start)===start
         ).length>1;
 
 
@@ -4248,6 +4311,10 @@ function renderGame(){
 
   song.notes.forEach(
     note=>{
+
+      if(note.type==="rest"){
+        return;
+      }
 
       if(
         game.hitNotes.has(
@@ -4388,6 +4455,10 @@ function gameInput(
   game.song.notes
     .forEach(
       noteData=>{
+
+        if(noteData.type==="rest"){
+          return;
+        }
 
         if(
           game.hitNotes.has(
@@ -4691,28 +4762,25 @@ document.addEventListener(
   "keydown",
   event=>{
 
-    if(
-      event.repeat
-    ){
+    if(event.repeat){
       return;
     }
 
+    if(game.active){
+      const note=KEYBOARD_MAP[event.key.toLowerCase()];
+      if(note){
+        event.preventDefault();
+        gameInput(note);
+      }
+      return;
+    }
 
-    const note=
-      KEYBOARD_MAP[
-        event.key.toLowerCase()
-      ];
-
-
-    if(
-      note &&
-      game.active
-    ){
-
-      gameInput(
-        note
-      );
-
+    if(event.key==="Enter" && selectedKeys.size>0){
+      const tag=(event.target?.tagName||"").toLowerCase();
+      if(tag!=="textarea" && tag!=="button" && tag!=="select"){
+        event.preventDefault();
+        addSelectedNotes();
+      }
     }
 
   }
