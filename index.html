@@ -1386,14 +1386,6 @@ import {
 "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
 import {
-  getStorage,
-  ref as storageRef,
-  uploadBytes,
-  getDownloadURL
-} from
-"https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
-
-import {
   getAuth,
   signInAnonymously,
   onAuthStateChanged
@@ -1435,7 +1427,6 @@ const MUSIC_ROOT =
 
 
 let db=null;
-let storage=null;
 let auth=null;
 let currentUser=null;
 
@@ -1684,6 +1675,8 @@ let composition={
   notes:[],
 
   audioUrl:"",
+  audioStorage:"",
+  songId:"",
   audioName:"",
   audioDuration:0,
   audioFile:null
@@ -2683,6 +2676,69 @@ function updateEditorForm(){
 
 
 /* =========================================================
+   LOCAL MP3 STORAGE (NO FIREBASE STORAGE / NO PAYMENT)
+========================================================= */
+const MP3_DB_NAME="FormwheelMusicLocal";
+const MP3_STORE="mp3Files";
+
+function openMP3DB(){
+  return new Promise((resolve,reject)=>{
+    const req=indexedDB.open(MP3_DB_NAME,1);
+    req.onupgradeneeded=()=>{
+      const db=req.result;
+      if(!db.objectStoreNames.contains(MP3_STORE)){
+        db.createObjectStore(MP3_STORE,{keyPath:"songId"});
+      }
+    };
+    req.onsuccess=()=>resolve(req.result);
+    req.onerror=()=>reject(req.error);
+  });
+}
+
+async function saveLocalMP3(songId,file,name,duration){
+  const db=await openMP3DB();
+  await new Promise((resolve,reject)=>{
+    const tx=db.transaction(MP3_STORE,"readwrite");
+    tx.objectStore(MP3_STORE).put({
+      songId,
+      blob:file,
+      name:name||file?.name||"MP3",
+      type:file?.type||"audio/mpeg",
+      duration:Number(duration)||0,
+      savedAt:Date.now()
+    });
+    tx.oncomplete=resolve;
+    tx.onerror=()=>reject(tx.error);
+  });
+  db.close();
+}
+
+async function getLocalMP3(songId){
+  if(!songId) return null;
+  const db=await openMP3DB();
+  const item=await new Promise((resolve,reject)=>{
+    const tx=db.transaction(MP3_STORE,"readonly");
+    const req=tx.objectStore(MP3_STORE).get(songId);
+    req.onsuccess=()=>resolve(req.result||null);
+    req.onerror=()=>reject(req.error);
+  });
+  db.close();
+  return item;
+}
+
+async function deleteLocalMP3(songId){
+  if(!songId) return;
+  const db=await openMP3DB();
+  await new Promise((resolve,reject)=>{
+    const tx=db.transaction(MP3_STORE,"readwrite");
+    tx.objectStore(MP3_STORE).delete(songId);
+    tx.oncomplete=resolve;
+    tx.onerror=()=>reject(tx.error);
+  });
+  db.close();
+}
+
+/* =========================================================
    MP3
 ========================================================= */
 
@@ -2697,7 +2753,7 @@ function updateMP3UI(){
     preview.style.display="block";
   }else if(composition.audioFile){
     status.style.display="block";
-    status.textContent=`🎵 ${composition.audioName || composition.audioFile.name} (저장 시 Firebase Storage에 업로드됩니다)`;
+    status.textContent=`🎵 ${composition.audioName || composition.audioFile.name} (브라우저에 안전하게 저장됩니다 (Firebase Storage 불필요))`;
     preview.style.display="block";
   }else{
     status.style.display="none";
@@ -2723,7 +2779,7 @@ if(mp3Input){
     preview.src=URL.createObjectURL(file);
     preview.style.display="block";
     status.style.display="block";
-    status.textContent=`🎵 ${file.name} (저장 시 Firebase Storage에 업로드됩니다)`;
+    status.textContent=`🎵 ${file.name} (브라우저에 안전하게 저장됩니다 (Firebase Storage 불필요))`;
     preview.onloadedmetadata=()=>{
       composition.audioDuration=Number(preview.duration)||0;
     };
@@ -2802,17 +2858,8 @@ async function(){
     let audioName=composition.audioName || "";
     let audioDuration=Number(composition.audioDuration)||0;
 
-    if(composition.audioFile){
-      if(!storage) throw new Error("Firebase Storage가 초기화되지 않았습니다.");
-      const safeName=composition.audioFile.name.replace(/[^a-zA-Z0-9._-]/g,"_");
-      const fileRef=storageRef(storage,`${MUSIC_ROOT}/audio/${currentUser.uid}/${Date.now()}_${safeName}`);
-      const uploaded=await uploadBytes(fileRef,composition.audioFile,{contentType:composition.audioFile.type||"audio/mpeg"});
-      audioUrl=await getDownloadURL(uploaded.ref);
-      composition.audioUrl=audioUrl;
-      composition.audioName=audioName;
-      composition.audioFile=null;
-    }
-
+    // MP3는 Firebase Storage가 아니라 이 브라우저의 IndexedDB에 저장합니다.
+    // 따라서 결제 플랜이나 Storage 활성화가 필요하지 않습니다.
     const songRef=
       push(
         ref(
@@ -2853,6 +2900,8 @@ async function(){
 
         audioDuration,
 
+        audioStorage:"indexedDB",
+
         owner:
           currentUser.uid,
 
@@ -2866,9 +2915,18 @@ async function(){
       }
     );
 
+    if(composition.audioFile){
+      await saveLocalMP3(
+        songRef.key,
+        composition.audioFile,
+        audioName,
+        audioDuration
+      );
+      composition.audioFile=null;
+    }
 
     alert(
-      "🎉 Firebase에 저장했습니다!"
+      "🎉 음악 정보를 Firebase에 저장했습니다!\n🎵 MP3는 이 브라우저에 저장되었습니다."
     );
 
 
@@ -3110,7 +3168,7 @@ function renderSongGrid(){
 
         <div class="song-meta">
 
-          ${song.audioUrl ? "🎵 MP3 포함<br>" : ""}
+          ${song.audioUrl || song.audioStorage === "indexedDB" ? "🎵 MP3 포함<br>" : ""}
           BPM ${song.tempo||120}<br>
 
           ${song.notes?.length||0}
@@ -3172,7 +3230,7 @@ function renderSongGrid(){
 }
 
 
-function loadSongIntoEditor(
+async function loadSongIntoEditor(
 song
 ){
 
@@ -3228,6 +3286,12 @@ song
     audioUrl:
       song.audioUrl || "",
 
+    audioStorage:
+      song.audioStorage || "",
+
+    songId:
+      song.songId || "",
+
     audioName:
       song.audioName || "",
 
@@ -3238,6 +3302,20 @@ song
 
   };
 
+
+  if(!composition.audioUrl && composition.songId && composition.audioStorage === "indexedDB"){
+    try{
+      const local=await getLocalMP3(composition.songId);
+      if(local?.blob){
+        composition.audioFile=local.blob;
+        composition.audioName=local.name || composition.audioName;
+        composition.audioDuration=Number(local.duration)||composition.audioDuration;
+        composition.audioUrl=URL.createObjectURL(local.blob);
+      }
+    }catch(error){
+      console.warn("로컬 MP3 복원 실패:",error);
+    }
+  }
 
   updateEditorForm();
 
@@ -3368,8 +3446,26 @@ function startPlayback(
   stopPlayback();
 
 
-  if(!song || (!song.notes?.length && !song.audioUrl)){
-    alert("재생할 음표 또는 MP3가 없습니다.");
+  if(!song){
+    alert("재생할 음악이 없습니다.");
+    return;
+  }
+
+  let playableAudioUrl=song.audioUrl || "";
+
+  if(!playableAudioUrl && song.audioStorage === "indexedDB" && song.songId){
+    try{
+      const local=await getLocalMP3(song.songId);
+      if(local?.blob){
+        playableAudioUrl=URL.createObjectURL(local.blob);
+      }
+    }catch(error){
+      console.warn("로컬 MP3 불러오기 실패:",error);
+    }
+  }
+
+  if(!song.notes?.length && !playableAudioUrl){
+    alert("재생할 음표 또는 이 브라우저에 저장된 MP3가 없습니다.");
     return;
   }
 
@@ -3380,8 +3476,8 @@ function startPlayback(
     window.currentMP3.currentTime=0;
   }
 
-  if(song.audioUrl){
-    const audio=new Audio(song.audioUrl);
+  if(playableAudioUrl){
+    const audio=new Audio(playableAudioUrl);
     audio.preload="auto";
     window.currentMP3=audio;
     audio.play().catch(err=>console.warn("MP3 재생:",err));
