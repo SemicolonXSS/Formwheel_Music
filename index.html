@@ -1362,6 +1362,20 @@ PERFECT!
 </main>
 
 
+<script>
+/* Local/offline navigation fallback */
+window.showScreen = function(name){
+  try{
+    if(typeof window.stopPlayback === "function") window.stopPlayback();
+    if(typeof window.stopGame === "function") window.stopGame();
+  }catch(e){}
+  document.querySelectorAll(".screen").forEach(el=>el.classList.remove("active"));
+  const target=document.getElementById(name);
+  if(target) target.classList.add("active");
+  window.scrollTo(0,0);
+};
+</script>
+
 <script type="module">
 
 /* =========================================================
