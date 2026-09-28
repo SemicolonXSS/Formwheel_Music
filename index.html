@@ -579,6 +579,24 @@ main{
   }
 
 }
+
+/* =========================
+   STAFF EDITOR / VIEWER
+========================= */
+.staff-wrap{overflow:auto;background:#fafbfe;border:1px solid #e5e7eb;border-radius:14px;padding:18px}
+.staff{position:relative;min-width:1100px;height:280px;background:#fff;border-radius:10px;overflow:hidden;cursor:crosshair}
+.staff-lines{position:absolute;left:40px;right:20px;top:92px;height:80px;border-top:2px solid #333;border-bottom:2px solid #333;background:repeating-linear-gradient(to bottom,transparent 0,transparent 15px,#333 15px,#333 17px)}
+.staff-clef{position:absolute;left:8px;top:67px;font-size:58px;line-height:1;color:#222}
+.staff-beat{position:absolute;top:76px;height:112px;border-left:1px dashed #d5d9e0;pointer-events:none}
+.staff-note{position:absolute;width:18px;height:13px;border:2px solid #202124;border-radius:50%;background:#202124;transform:rotate(-18deg);z-index:3;cursor:pointer}
+.staff-note::after{content:"";position:absolute;width:2px;height:38px;background:#202124;right:-2px;bottom:5px}
+.staff-note.rest{background:transparent;border:0;font-size:20px;width:24px;height:24px;transform:none}
+.staff-note.rest::after{display:none}
+.staff-note.selected{outline:3px solid #8ab4f8;outline-offset:3px}
+.staff-cursor{position:absolute;top:55px;bottom:22px;width:2px;background:#e53935;z-index:8;display:none;pointer-events:none}
+.staff-mode-bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.staff-help{color:#666;font-size:13px;line-height:1.6;margin-top:10px}
+
 </style>
 </head>
 
@@ -833,21 +851,6 @@ main{
 
 <div class="field">
 
-<label>시작 박자</label>
-
-<input
-  id="startBeat"
-  type="number"
-  min="0"
-  step=".5"
-  value="0"
->
-
-</div>
-
-
-<div class="field">
-
 <label>음표 길이</label>
 
 <select id="duration">
@@ -890,26 +893,15 @@ main{
 </div>
 
 
-<div class="field">
-
-<label>추가 후 박자</label>
-
-<select id="advanceMode">
-
-<option value="none">
-그대로
-</option>
-
-<option value="duration">
-음표 길이만큼 이동
-</option>
-
-</select>
-
 </div>
 
 </div>
 
+<div class="staff-mode-bar">
+<button class="secondary" onclick="setEditorMode('piano')">🎹 피아노 방식</button>
+<button class="secondary" onclick="setEditorMode('staff')">🎼 오선보 제작</button>
+<span id="editorModeLabel" class="info" style="margin:0;padding:8px 10px">현재: 피아노 방식</span>
+</div>
 
 <div class="toolbar">
 
@@ -967,11 +959,6 @@ JSON 가져오기
 
 </label>
 
-<label class="secondary">
-🎵 MP3 가져오기
-<input id="mp3File" type="file" accept="audio/mpeg,audio/mp3,.mp3" hidden>
-</label>
-
 <button
   class="primary"
   onclick="saveCurrentSong()"
@@ -984,10 +971,9 @@ JSON 가져오기
 
 <div class="info">
 
-같은 시작 박자에 여러 음을 선택해서 추가하면
-자동으로 <b>화음</b>으로 처리됩니다.<br>
-<b>Enter</b> 키를 누르면 선택한 음이 바로 삽입됩니다.
-쉼표는 <b>🤫 쉼표 삽입</b> 버튼으로 추가할 수 있습니다.
+음표를 추가하면 기존 음표의 마지막 박자 다음으로 자동 이동합니다.<br>
+여러 음을 동시에 선택하면 같은 박자의 <b>화음</b>으로 추가됩니다.<br>
+<b>Enter</b> 키로 선택한 음을 추가할 수 있으며, 오선보에서는 원하는 위치를 클릭해 음표를 넣을 수 있습니다.
 
 </div>
 
@@ -1017,6 +1003,20 @@ C3 ~ B5 · 36음
 
 </div>
 
+<div id="staffEditorPanel" class="panel hidden">
+  <div class="panel-title">
+    <h2>🎼 오선보 제작</h2>
+    <span>클릭한 위치에 음표가 들어갑니다</span>
+  </div>
+  <div class="staff-wrap">
+    <div id="editorStaff" class="staff">
+      <div class="staff-clef">𝄞</div>
+      <div class="staff-lines"></div>
+      <div id="editorStaffContent"></div>
+    </div>
+  </div>
+  <div class="staff-help">가로 위치 = 박자, 세로 위치 = 음높이입니다. 현재 선택한 음표 길이를 사용하며, 일반 음표는 자동으로 다음 박자로 이어집니다.</div>
+</div>
 
 <div class="panel">
 
@@ -1044,9 +1044,6 @@ C3 ~ B5 · 36음
 
 </div>
 
-
-<div id="mp3Status" class="empty" style="margin-top:12px;display:none"></div>
-<audio id="mp3Preview" controls style="width:100%;margin-top:12px;display:none"></audio>
 
 <div
   id="noteList"
@@ -1165,6 +1162,20 @@ C3 ~ B5 · 36음
 
 </div>
 
+</div>
+
+<div class="staff-mode-bar" style="margin-top:12px">
+  <button class="secondary" onclick="setPlaybackView('falling')">🎹 떨어지는 음표</button>
+  <button class="secondary" onclick="setPlaybackView('staff')">🎼 오선보 보기</button>
+</div>
+
+<div id="playStaffWrap" class="staff-wrap hidden">
+  <div id="playStaff" class="staff">
+    <div class="staff-clef">𝄞</div>
+    <div class="staff-lines"></div>
+    <div id="playStaffContent"></div>
+    <div id="playStaffCursor" class="staff-cursor"></div>
+  </div>
 </div>
 
 </div>
@@ -1362,40 +1373,7 @@ PERFECT!
 </main>
 
 
-<script>
-/* Local/offline navigation fallback */
-window.showScreen = function(name){
-  try{
-    if(typeof window.stopPlayback === "function") window.stopPlayback();
-    if(typeof window.stopGame === "function") window.stopGame();
-  }catch(e){}
-  document.querySelectorAll(".screen").forEach(el=>el.classList.remove("active"));
-  const target=document.getElementById(name);
-  if(target) target.classList.add("active");
-  window.scrollTo(0,0);
-};
-</script>
-
-<script>
-/* Firebase module watchdog: static ES-module import errors otherwise leave the badge forever on "연결 중". */
-window.__fwFirebaseModuleStarted = false;
-setTimeout(function(){
-  if(!window.__fwFirebaseModuleStarted){
-    const badge=document.getElementById("firebaseStatus");
-    const msg=document.getElementById("firebaseMessage");
-    if(badge){
-      badge.className="firebase-status error";
-      badge.textContent="❌ Firebase 모듈 로드 실패";
-    }
-    if(msg){
-      msg.textContent="Firebase 모듈이 실행되지 않았습니다. GitHub Pages에서 새로고침(Ctrl+F5)하거나 브라우저 콘솔의 오류를 확인하세요.";
-    }
-  }
-}, 10000);
-</script>
-
 <script type="module">
-window.__fwFirebaseModuleStarted = true;
 
 /* =========================================================
    FIREBASE
@@ -1429,7 +1407,7 @@ import {
 const firebaseConfig = {
 
   apiKey:
-    "AIzaSyBreTSe1m0-xlbF4aupnU5isRZCihR25IE",
+    "AIzaSyBreTSe1m0-xbF4aupnU5isRZCihR25IE",
 
   authDomain:
     "formwheel.firebaseapp.com",
@@ -1565,20 +1543,9 @@ async function initFirebase(){
 
     try{
 
-      /*
-         익명 인증이 네트워크/설정 문제로 무한 대기하는 것을 방지합니다.
-         DB 초기화와 인증 상태를 분리해서 표시합니다.
-      */
-      const authPromise = signInAnonymously(auth);
-      const timeoutPromise = new Promise((_, reject) =>
-        setTimeout(() => {
-          const e = new Error("익명 인증 응답 시간 초과");
-          e.code = "auth/timeout";
-          reject(e);
-        }, 8000)
+      await signInAnonymously(
+        auth
       );
-
-      await Promise.race([authPromise, timeoutPromise]);
 
     }catch(error){
 
@@ -1589,11 +1556,9 @@ async function initFirebase(){
 
       authReady=false;
 
-      // DB 초기화 자체는 성공했으므로
-      // 인증 실패를 Firebase 전체 연결 실패로 처리하지 않습니다.
       setFirebaseStatus(
         "error",
-        "🟡 Firebase DB 연결됨 · 로그인 확인 필요"
+        "❌ Firebase 인증 실패"
       );
 
     }
@@ -1613,7 +1578,7 @@ async function initFirebase(){
 
     setFirebaseStatus(
       "error",
-      "❌ Firebase 연결 실패: "+(error.code || error.message || "알 수 없는 오류")
+      "❌ Firebase 연결 실패"
     );
 
   }
@@ -1718,20 +1683,16 @@ let composition={
 
   tempo:120,
 
-  notes:[],
-
-  audioUrl:"",
-  audioStorage:"",
-  songId:"",
-  audioName:"",
-  audioDuration:0,
-  audioFile:null
+  notes:[]
 
 };
 
 
 let selectedKeys=
   new Set();
+
+let editorMode="piano";
+let playbackView="falling";
 
 
 let songsCache=[];
@@ -2247,144 +2208,99 @@ function(){
    ADD NOTES
 ========================================================= */
 
-window.addSelectedNotes=
-function(){
+function getNextInsertBeat(){
+  if(!composition.notes.length) return 0;
+  return Math.max(...composition.notes.map(n=>Number(n.start||0)+Number(n.duration||1)));
+}
 
-  if(
-    !selectedKeys.size
-  ){
-
-    alert(
-      "피아노에서 음을 먼저 선택해주세요."
-    );
-
+window.addSelectedNotes=function(){
+  if(!selectedKeys.size){
+    alert("피아노에서 음을 먼저 선택해주세요.");
     return;
   }
-
-
-  const start=
-    Number(
-      document.getElementById(
-        "startBeat"
-      ).value
-    )||0;
-
-
-  const duration=
-    Number(
-      document.getElementById(
-        "duration"
-      ).value
-    )||1;
-
-
-  [...selectedKeys]
-    .forEach(
-      note=>{
-
-        composition.notes.push({
-
-          id:
-            crypto.randomUUID(),
-
-          type:"note",
-
-          note,
-
-          start,
-
-          duration
-
-        });
-
-      }
-    );
-
-
-  composition.notes.sort(
-    (a,b)=>{
-
-      if(
-        a.start!==b.start
-      ){
-
-        return a.start-b.start;
-
-      }
-
-      if((a.type||"note")!==(b.type||"note")){
-        return (a.type||"note")==="rest" ? -1 : 1;
-      }
-
-      return (NOTE_INDEX[a.note] ?? 0)-
-        (NOTE_INDEX[b.note] ?? 0);
-
-    }
-  );
-
-
-  if(
-    document.getElementById(
-      "advanceMode"
-    ).value==="duration"
-  ){
-
-    document.getElementById(
-      "startBeat"
-    ).value=
-      start+duration;
-
-  }
-
-
-  renderTimeline();
-  renderNoteList();
-
-  clearSelectedKeys();
-
+  const start=getNextInsertBeat();
+  const duration=Number(document.getElementById("duration").value)||1;
+  [...selectedKeys].forEach(note=>{
+    composition.notes.push({id:crypto.randomUUID(),type:"note",note,start,duration});
+  });
+  composition.notes.sort((a,b)=>(a.start-b.start)||((NOTE_INDEX[a.note]??0)-(NOTE_INDEX[b.note]??0)));
+  renderTimeline(); renderNoteList(); renderStaffEditor(); clearSelectedKeys();
 };
 
-
-window.addRest=
-function(){
-
-  const start=
-    Number(
-      document.getElementById(
-        "startBeat"
-      ).value
-    )||0;
-
-  const duration=
-    Number(
-      document.getElementById(
-        "duration"
-      ).value
-    )||1;
-
-  composition.notes.push({
-    id:crypto.randomUUID(),
-    type:"rest",
-    start,
-    duration
-  });
-
-  composition.notes.sort((a,b)=>{
-    if(a.start!==b.start) return a.start-b.start;
-    if((a.type||"note")!==(b.type||"note")){
-      return (a.type||"note")==="rest" ? -1 : 1;
-    }
-    return (NOTE_INDEX[a.note] ?? 0) - (NOTE_INDEX[b.note] ?? 0);
-  });
-
-  if(document.getElementById("advanceMode").value==="duration"){
-    document.getElementById("startBeat").value=start+duration;
-  }
-
-  renderTimeline();
-  renderNoteList();
+window.addRest=function(){
+  const start=getNextInsertBeat();
+  const duration=Number(document.getElementById("duration").value)||1;
+  composition.notes.push({id:crypto.randomUUID(),type:"rest",start,duration});
+  composition.notes.sort((a,b)=>a.start-b.start);
+  renderTimeline(); renderNoteList(); renderStaffEditor();
 };
 
+window.setEditorMode=function(mode){
+  editorMode=mode;
+  const piano=document.getElementById("editorPiano");
+  const staff=document.getElementById("staffEditorPanel");
+  if(piano) piano.parentElement.parentElement.classList.toggle("hidden",mode!=="piano");
+  if(staff) staff.classList.toggle("hidden",mode!=="staff");
+  const label=document.getElementById("editorModeLabel");
+  if(label) label.textContent=mode==="staff"?"현재: 오선보 제작":"현재: 피아노 방식";
+  renderStaffEditor();
+};
+
+function noteToStaffY(note){
+  const idx=NOTE_INDEX[note];
+  if(idx==null) return 130;
+  const c4=NOTE_INDEX["C4"];
+  return 132-(idx-c4)*5.2;
+}
+
+function staffYToNote(y){
+  const c4=NOTE_INDEX["C4"];
+  const idx=Math.max(0,Math.min(ALL_NOTES.length-1,Math.round((132-y)/5.2)+c4));
+  return ALL_NOTES[idx];
+}
+
+function renderStaffEditor(){
+  const staff=document.getElementById("editorStaff");
+  const layer=document.getElementById("editorStaffContent");
+  if(!staff||!layer) return;
+  layer.innerHTML="";
+  const width=Math.max(1100,Math.max(16,getNextInsertBeat()+4)*70+60);
+  staff.style.width=width+"px";
+  composition.notes.forEach(item=>{
+    const el=document.createElement("div");
+    if(item.type==="rest"){
+      el.className="staff-note rest";
+      el.textContent="𝄽";
+      el.style.left=(45+item.start*70)+"px";
+      el.style.top="115px";
+    }else{
+      el.className="staff-note";
+      el.textContent=item.note.includes("#")?"♯":"";
+      el.style.left=(45+item.start*70)+"px";
+      el.style.top=noteToStaffY(item.note)+"px";
+      if(item.note.includes("#")) el.style.marginLeft="-18px";
+    }
+    layer.appendChild(el);
+  });
+}
+
+(function bindStaffClick(){
+  const staff=document.getElementById("editorStaff");
+  if(!staff) return;
+  staff.addEventListener("click",e=>{
+    if(editorMode!=="staff") return;
+    const r=staff.getBoundingClientRect();
+    const x=e.clientX-r.left-45;
+    const y=e.clientY-r.top;
+    if(y<45||y>210||x<0) return;
+    const beat=Math.max(0,Math.round((x/70)*2)/2);
+    const note=staffYToNote(y);
+    const duration=Number(document.getElementById("duration").value)||1;
+    composition.notes.push({id:crypto.randomUUID(),type:"note",note,start:beat,duration});
+    composition.notes.sort((a,b)=>a.start-b.start || ((NOTE_INDEX[a.note]??0)-(NOTE_INDEX[b.note]??0)));
+    renderTimeline(); renderNoteList(); renderStaffEditor();
+  });
+})();
 
 /* =========================================================
    TIMELINE
@@ -2423,6 +2339,7 @@ function renderTimeline(){
   });
 
   document.getElementById("noteCount").textContent=`${composition.notes.length}개 항목`;
+  renderStaffEditor();
 }
 
 function renderNoteList(){
@@ -2456,6 +2373,7 @@ function renderNoteList(){
       composition.notes.splice(index,1);
       renderTimeline();
       renderNoteList();
+      renderStaffEditor();
     };
 
     list.appendChild(row);
@@ -2476,6 +2394,7 @@ function(){
 
   renderTimeline();
   renderNoteList();
+  renderStaffEditor();
 
 };
 
@@ -2503,6 +2422,7 @@ function(){
 
   renderTimeline();
   renderNoteList();
+  renderStaffEditor();
 
 };
 
@@ -2720,121 +2640,8 @@ function updateEditorForm(){
   ).value=
     composition.tempo;
 
-  updateMP3UI();
-
 }
 
-
-/* =========================================================
-   LOCAL MP3 STORAGE (NO FIREBASE STORAGE / NO PAYMENT)
-========================================================= */
-const MP3_DB_NAME="FormwheelMusicLocal";
-const MP3_STORE="mp3Files";
-
-function openMP3DB(){
-  return new Promise((resolve,reject)=>{
-    const req=indexedDB.open(MP3_DB_NAME,1);
-    req.onupgradeneeded=()=>{
-      const db=req.result;
-      if(!db.objectStoreNames.contains(MP3_STORE)){
-        db.createObjectStore(MP3_STORE,{keyPath:"songId"});
-      }
-    };
-    req.onsuccess=()=>resolve(req.result);
-    req.onerror=()=>reject(req.error);
-  });
-}
-
-async function saveLocalMP3(songId,file,name,duration){
-  const db=await openMP3DB();
-  await new Promise((resolve,reject)=>{
-    const tx=db.transaction(MP3_STORE,"readwrite");
-    tx.objectStore(MP3_STORE).put({
-      songId,
-      blob:file,
-      name:name||file?.name||"MP3",
-      type:file?.type||"audio/mpeg",
-      duration:Number(duration)||0,
-      savedAt:Date.now()
-    });
-    tx.oncomplete=resolve;
-    tx.onerror=()=>reject(tx.error);
-  });
-  db.close();
-}
-
-async function getLocalMP3(songId){
-  if(!songId) return null;
-  const db=await openMP3DB();
-  const item=await new Promise((resolve,reject)=>{
-    const tx=db.transaction(MP3_STORE,"readonly");
-    const req=tx.objectStore(MP3_STORE).get(songId);
-    req.onsuccess=()=>resolve(req.result||null);
-    req.onerror=()=>reject(req.error);
-  });
-  db.close();
-  return item;
-}
-
-async function deleteLocalMP3(songId){
-  if(!songId) return;
-  const db=await openMP3DB();
-  await new Promise((resolve,reject)=>{
-    const tx=db.transaction(MP3_STORE,"readwrite");
-    tx.objectStore(MP3_STORE).delete(songId);
-    tx.oncomplete=resolve;
-    tx.onerror=()=>reject(tx.error);
-  });
-  db.close();
-}
-
-/* =========================================================
-   MP3
-========================================================= */
-
-function updateMP3UI(){
-  const status=document.getElementById("mp3Status");
-  const preview=document.getElementById("mp3Preview");
-  if(!status || !preview) return;
-  if(composition.audioUrl){
-    status.style.display="block";
-    status.textContent=`🎵 ${composition.audioName || "MP3"}가 연결되어 있습니다.`;
-    preview.src=composition.audioUrl;
-    preview.style.display="block";
-  }else if(composition.audioFile){
-    status.style.display="block";
-    status.textContent=`🎵 ${composition.audioName || composition.audioFile.name} (브라우저에 안전하게 저장됩니다 (Firebase Storage 불필요))`;
-    preview.style.display="block";
-  }else{
-    status.style.display="none";
-    preview.removeAttribute("src");
-    preview.style.display="none";
-  }
-}
-
-const mp3Input=document.getElementById("mp3File");
-if(mp3Input){
-  mp3Input.addEventListener("change",event=>{
-    const file=event.target.files[0];
-    if(!file) return;
-    if(!file.type.startsWith("audio/") && !/\.mp3$/i.test(file.name)){
-      alert("MP3 파일을 선택해주세요.");
-      return;
-    }
-    composition.audioFile=file;
-    composition.audioUrl="";
-    composition.audioName=file.name;
-    const preview=document.getElementById("mp3Preview");
-    const status=document.getElementById("mp3Status");
-    preview.src=URL.createObjectURL(file);
-    preview.style.display="block";
-    status.style.display="block";
-    status.textContent=`🎵 ${file.name} (브라우저에 안전하게 저장됩니다 (Firebase Storage 불필요))`;
-    preview.onloadedmetadata=()=>{
-      composition.audioDuration=Number(preview.duration)||0;
-    };
-  });
-}
 
 /* =========================================================
    SAVE
@@ -2889,13 +2696,11 @@ async function(){
 
 
   if(
-    !composition.notes.length &&
-    !composition.audioFile &&
-    !composition.audioUrl
+    !composition.notes.length
   ){
 
     alert(
-      "음표를 만들거나 MP3를 가져와주세요."
+      "먼저 음악을 만들어주세요."
     );
 
     return;
@@ -2904,12 +2709,6 @@ async function(){
 
   try{
 
-    let audioUrl=composition.audioUrl || "";
-    let audioName=composition.audioName || "";
-    let audioDuration=Number(composition.audioDuration)||0;
-
-    // MP3는 Firebase Storage가 아니라 이 브라우저의 IndexedDB에 저장합니다.
-    // 따라서 결제 플랜이나 Storage 활성화가 필요하지 않습니다.
     const songRef=
       push(
         ref(
@@ -2944,14 +2743,6 @@ async function(){
         notes:
           composition.notes,
 
-        audioUrl,
-
-        audioName,
-
-        audioDuration,
-
-        audioStorage:"indexedDB",
-
         owner:
           currentUser.uid,
 
@@ -2965,18 +2756,9 @@ async function(){
       }
     );
 
-    if(composition.audioFile){
-      await saveLocalMP3(
-        songRef.key,
-        composition.audioFile,
-        audioName,
-        audioDuration
-      );
-      composition.audioFile=null;
-    }
 
     alert(
-      "🎉 음악 정보를 Firebase에 저장했습니다!\n🎵 MP3는 이 브라우저에 저장되었습니다."
+      "🎉 Firebase에 저장했습니다!"
     );
 
 
@@ -3218,7 +3000,6 @@ function renderSongGrid(){
 
         <div class="song-meta">
 
-          ${song.audioUrl || song.audioStorage === "indexedDB" ? "🎵 MP3 포함<br>" : ""}
           BPM ${song.tempo||120}<br>
 
           ${song.notes?.length||0}
@@ -3280,8 +3061,8 @@ function renderSongGrid(){
 }
 
 
-async function loadSongIntoEditor(
-song
+function loadSongIntoEditor(
+  song
 ){
 
   composition={
@@ -3331,41 +3112,10 @@ song
               )||1
 
           })
-        ),
-
-    audioUrl:
-      song.audioUrl || "",
-
-    audioStorage:
-      song.audioStorage || "",
-
-    songId:
-      song.songId || "",
-
-    audioName:
-      song.audioName || "",
-
-    audioDuration:
-      Number(song.audioDuration)||0,
-
-    audioFile:null
+        )
 
   };
 
-
-  if(!composition.audioUrl && composition.songId && composition.audioStorage === "indexedDB"){
-    try{
-      const local=await getLocalMP3(composition.songId);
-      if(local?.blob){
-        composition.audioFile=local.blob;
-        composition.audioName=local.name || composition.audioName;
-        composition.audioDuration=Number(local.duration)||composition.audioDuration;
-        composition.audioUrl=URL.createObjectURL(local.blob);
-      }
-    }catch(error){
-      console.warn("로컬 MP3 복원 실패:",error);
-    }
-  }
 
   updateEditorForm();
 
@@ -3377,6 +3127,7 @@ song
   );
 
 }
+
 
 /* =========================================================
    PLAYER PIANO
@@ -3489,7 +3240,34 @@ function buildLanes(
    PLAYBACK ENGINE
 ========================================================= */
 
-async function startPlayback(
+window.setPlaybackView=function(view){
+  playbackView=view;
+  const stage=document.getElementById("playStage");
+  const staff=document.getElementById("playStaffWrap");
+  if(stage) stage.classList.toggle("hidden",view!=="falling");
+  if(staff) staff.classList.toggle("hidden",view!=="staff");
+  renderPlaybackStaff();
+};
+
+function renderPlaybackStaff(){
+  const staff=document.getElementById("playStaff");
+  const layer=document.getElementById("playStaffContent");
+  if(!staff||!layer||!playback.song) return;
+  layer.innerHTML="";
+  const song=playback.song;
+  const width=Math.max(1100,Math.max(16,...(song.notes||[]).map(n=>Number(n.start||0)+Number(n.duration||1))) * 70 + 60);
+  staff.style.width=width+"px";
+  (song.notes||[]).forEach(item=>{
+    if(item.type==="rest") return;
+    const el=document.createElement("div");
+    el.className="staff-note";
+    el.style.left=(45+Number(item.start||0)*70)+"px";
+    el.style.top=noteToStaffY(item.note)+"px";
+    layer.appendChild(el);
+  });
+}
+
+function startPlayback(
   song
 ){
 
@@ -3500,38 +3278,10 @@ async function startPlayback(
     alert("재생할 음악이 없습니다.");
     return;
   }
+  song.notes=song.notes||[];
 
-  let playableAudioUrl=song.audioUrl || "";
-
-  if(!playableAudioUrl && song.audioStorage === "indexedDB" && song.songId){
-    try{
-      const local=await getLocalMP3(song.songId);
-      if(local?.blob){
-        playableAudioUrl=URL.createObjectURL(local.blob);
-      }
-    }catch(error){
-      console.warn("로컬 MP3 불러오기 실패:",error);
-    }
-  }
-
-  if(!song.notes?.length && !playableAudioUrl){
-    alert("재생할 음표 또는 이 브라우저에 저장된 MP3가 없습니다.");
-    return;
-  }
 
   ensureAudio();
-
-  if(window.currentMP3){
-    window.currentMP3.pause();
-    window.currentMP3.currentTime=0;
-  }
-
-  if(playableAudioUrl){
-    const audio=new Audio(playableAudioUrl);
-    audio.preload="auto";
-    window.currentMP3=audio;
-    audio.play().catch(err=>console.warn("MP3 재생:",err));
-  }
 
 
   playback.active=true;
@@ -3554,13 +3304,13 @@ async function startPlayback(
 
 
   const maxBeat=
-    song.notes?.length ? Math.max(
+    Math.max(
       ...song.notes.map(
         note=>
           Number(note.start)+
           Number(note.duration)
       )
-    ) : 0;
+    );
 
 
   playback.endSeconds=
@@ -3610,6 +3360,8 @@ async function startPlayback(
   document.getElementById(
     "playNotes"
   ).innerHTML="";
+  renderPlaybackStaff();
+  setPlaybackView(playbackView);
 
 
   /*
@@ -3706,6 +3458,11 @@ function renderPlayback(){
     elapsed/
     beatSeconds;
 
+  if(playbackView==="staff"){
+    const cursor=document.getElementById("playStaffCursor");
+    if(cursor) cursor.style.left=(45+currentBeat*70)+"px";
+  }
+
 
   const stageHeight=
     stage.clientHeight;
@@ -3745,7 +3502,7 @@ function renderPlayback(){
   layer.innerHTML="";
 
 
-  (song.notes||[]).forEach(
+  song.notes.forEach(
     note=>{
 
       if(note.type==="rest"){
@@ -3961,12 +3718,6 @@ function(){
   playback.active=false;
 
   playback.song=null;
-
-  if(window.currentMP3){
-    window.currentMP3.pause();
-    window.currentMP3.currentTime=0;
-    window.currentMP3=null;
-  }
 
   playback.scheduled.clear();
 
