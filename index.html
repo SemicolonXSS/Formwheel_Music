@@ -280,12 +280,12 @@ function stopAllTones(){
  for(const {osc,gain} of activeTones){try{osc.stop();}catch{}osc.disconnect();gain.disconnect();}
  activeTones.clear();
 }
-function playTone(note,duration=.25,instrument="piano"){
+function playTone(note,duration=.25,instrument="piano",when=null){
   ensureAudio();
   const ctx=audioContext,osc=ctx.createOscillator(),gain=ctx.createGain();
   osc.type=instrument==="violin"?"sawtooth":instrument==="guitar"?"triangle":"sine";
   osc.frequency.value=getFrequency(note);
-  const now=ctx.currentTime,d=Math.max(.06,duration);
+  const now=Math.max(ctx.currentTime,when??ctx.currentTime),d=Math.max(.06,duration);
   gain.gain.setValueAtTime(.0001,now);
   gain.gain.exponentialRampToValueAtTime(.3,now+.02);
   gain.gain.exponentialRampToValueAtTime(.0001,now+d);
@@ -628,7 +628,9 @@ function startPlayback(song){
 function beginPlayback(){
   if(!playback.active||playback.startedAt!==null)return;
   ensureAudio();removeStageOverlay("playStage");
-  playback.startedAt=performance.now();
+  playback.startedAt=audioContext.currentTime;
+  const beatSec=60/(Number(playback.song.tempo)||120);
+  playback.song.notes.forEach(n=>{if(n.type!=="rest")playTone(n.note,Math.max(.08,Number(n.duration)*beatSec),playback.song.instrument,playback.startedAt+Number(n.start)*beatSec);});
   renderPlayback();
 }
 function renderPlayback(){
@@ -636,14 +638,9 @@ function renderPlayback(){
   const song=playback.song,stage=$("playStage");
   if(stage.clientHeight===0||stage.clientWidth===0){playback.raf=requestAnimationFrame(renderPlayback);return}
   const beatSec=60/(Number(song.tempo)||120);
-  const elapsed=(performance.now()-playback.startedAt)/1000,beat=elapsed/beatSec;
+  const elapsed=(audioContext.currentTime-playback.startedAt),beat=elapsed/beatSec;
   if(playbackView==="staff"){const c=$("playStaffCursor");if(c)c.style.left=(45+beat*70)+"px"}
   drawNotes($("playNotes"),stage,song,beat,null);
-  song.notes.forEach(n=>{
-    if(n.type==="rest"||playback.scheduled.has(n.id)||beat<Number(n.start))return;
-    playback.scheduled.add(n.id);
-    playTone(n.note,Math.max(.08,Number(n.duration)*beatSec),song.instrument);
-  });
   $("playTime").textContent=formatTime(elapsed);
   if(elapsed>playback.endSeconds+1){stopPlayback();return}
   playback.raf=requestAnimationFrame(renderPlayback);
@@ -695,7 +692,7 @@ function beginGameCountdown(){
     if(count>0){showStageOverlay("gameStage",count,120);return}
     clearInterval(game.countdownTimer);game.countdownTimer=null;game.countdownActive=false;
     removeStageOverlay("gameStage");
-    game.startedAt=performance.now();
+    ensureAudio();game.startedAt=audioContext.currentTime;
     renderGame();
   },1000);
 }
@@ -704,7 +701,7 @@ function renderGame(){
   const song=game.song,stage=$("gameStage");
   if(stage.clientWidth===0||stage.clientHeight===0){game.raf=requestAnimationFrame(renderGame);return}
   const beatSec=60/(Number(song.tempo)||120);
-  const elapsed=(performance.now()-game.startedAt)/1000,beat=elapsed/beatSec;
+  const elapsed=(audioContext.currentTime-game.startedAt),beat=elapsed/beatSec;
   drawNotes($("gameNotes"),stage,song,beat,game.hitNotes);
   const range=Number($("judgeRange").value);
   song.notes.forEach(n=>{
@@ -721,7 +718,7 @@ function gameInput(note){
   playTone(note,.18,game.song.instrument);
   flashGameKey(note);
   const beatSec=60/(Number(game.song.tempo)||120);
-  const beat=(performance.now()-game.startedAt)/1000/beatSec;
+  const beat=(audioContext.currentTime-game.startedAt)/beatSec;
   const range=Number($("judgeRange").value);
   let target=null,best=Infinity;
   game.song.notes.forEach(n=>{
@@ -859,4 +856,5 @@ initFirebase();
 </script>
 </body>
 </html>
+
 
