@@ -86,6 +86,8 @@ main{max-width:1400px;margin:auto;padding:30px 20px 70px}
 @media(max-width:900px){.menu-grid{grid-template-columns:1fr}.form-grid{grid-template-columns:1fr 1fr}nav{display:none}}
 @media(max-width:550px){.form-grid{grid-template-columns:1fr}.hero h1{font-size:32px}}
 </style>
+<link rel="stylesheet" href="https://semicolonxss.github.io/Formwheel/shared/formwheel-ui.css">
+<script defer src="https://semicolonxss.github.io/Formwheel/shared/formwheel-ui.js"></script>
 </head>
 <body>
 <header>
@@ -260,7 +262,7 @@ i:"C5",9:"C#5",o:"D5",0:"D#5",p:"E5","[":"F5","=":"F#5","]":"G5"};
 
 /* ===== STATE ===== */
 let composition={title:"나의 음악",instrument:"piano",handMode:"two",tempo:120,notes:[]};
-let selectedKeys=new Set(),editorMode="piano",playbackView="falling",songsCache=[],audioContext=null;
+let selectedKeys=new Set(),editorMode="piano",playbackView="falling",songsCache=[],audioContext=null,uploadedAudio=null,uploadedAudioUrl=null;
 const playback={active:false,raf:null,song:null,startedAt:null,endSeconds:0,scheduled:new Set()};
 const game={active:false,raf:null,song:null,startedAt:null,countdownActive:false,countdownTimer:null,score:0,combo:0,hits:0,misses:0,judged:0,hitNotes:new Set(),totalSeconds:0};
 
@@ -277,6 +279,7 @@ function getFrequency(note){
 }
 const activeTones = new Set();
 function stopAllTones(){
+ if(uploadedAudio)uploadedAudio.pause();
  for(const {osc,gain} of activeTones){try{osc.stop();}catch{}osc.disconnect();gain.disconnect();}
  activeTones.clear();
 }
@@ -295,6 +298,15 @@ function playTone(note,duration=.25,instrument="piano",when=null){
   osc.start(now);osc.stop(now+d+.03);
 }
 
+const mp3Card=document.createElement("section");mp3Card.className="card";mp3Card.style.marginTop="18px";
+mp3Card.innerHTML='<h3>MP3 / 오디오 업로드</h3><p>기기의 오디오 파일을 감상합니다. 서버로 전송되지 않으며 음표 게임용 악보로 자동 변환하지 않습니다. 최대 20MB.</p><input id="mp3Upload" type="file" accept="audio/*,.mp3"><audio id="mp3Player" controls style="display:block;width:100%;margin-top:12px"></audio><button id="mp3Stop">오디오 정지</button><p id="mp3Status" role="status"></p>';
+$("library").append(mp3Card);uploadedAudio=$("mp3Player");
+$("mp3Upload").onchange=event=>{const file=event.target.files[0];if(!file)return;
+ if(file.size>20*1024*1024){$("mp3Status").textContent="20MB 이하 파일을 선택해주세요.";return;}
+ stopPlayback();stopGame();if(uploadedAudioUrl)URL.revokeObjectURL(uploadedAudioUrl);uploadedAudioUrl=URL.createObjectURL(file);uploadedAudio.src=uploadedAudioUrl;$("mp3Status").textContent=file.name+" · 이 기기에서 재생";
+};
+$("mp3Stop").onclick=()=>{uploadedAudio.pause();uploadedAudio.currentTime=0;};
+addEventListener("beforeunload",()=>{uploadedAudio.pause();if(uploadedAudioUrl)URL.revokeObjectURL(uploadedAudioUrl);});
 /* ===== SCREEN ===== */
 window.showScreen=function(name){
   stopPlayback();stopGame();
