@@ -1,9 +1,9 @@
-import {ALL,IDX,KEYMAP} from './music-data.js';
-import {audioContext,ensureAudio,playTone,stopAllTones} from './audio-engine.js';
-import {normalizeSong,validateHands,handFor} from './editor.js';
-import {drawNotes,maxBeatOf,scheduleAhead} from './player.js';
-import {nearestNote,judgment} from './game.js';
-import {saveSong,listSongs,saveScore,listScores} from './firebase-service.js';
+import {ALL,IDX,KEYMAP} from './music-data.js?v=b4c9e4deef97';
+import {audioContext,ensureAudio,playTone,stopAllTones} from './audio-engine.js?v=67c5791b484b';
+import {normalizeSong,validateHands,handFor} from './editor.js?v=8584314d0275';
+import {drawNotes,maxBeatOf,scheduleAhead} from './player.js?v=9e98e5a5a809';
+import {nearestNote,judgment} from './game.js?v=7ce5de4f6081';
+import {saveSong,listSongs,saveScore,listScores} from './firebase-service.js?v=d1c030b47cbf';
 import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import{getDatabase}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 import{getAuth,signInAnonymously,onAuthStateChanged}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";

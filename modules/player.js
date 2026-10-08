@@ -1,5 +1,5 @@
-import {ALL,IDX} from './music-data.js';
-import {handFor} from './editor.js';
+import {ALL,IDX} from './music-data.js?v=b4c9e4deef97';
+import {handFor} from './editor.js?v=8584314d0275';
 export function drawNotes(layer,stage,song,beat,skip){
   layer.innerHTML="";
   const hitY=stage.clientHeight-82,ppb=hitY/8,lw=stage.clientWidth/ALL.length;

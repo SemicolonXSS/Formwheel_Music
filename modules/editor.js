@@ -1,4 +1,4 @@
-import {IDX} from './music-data.js';
+import {IDX} from './music-data.js?v=b4c9e4deef97';
 export function handFor(note,mode){const index=IDX[note];if(mode==='one')return 1;if(mode==='four')return Math.min(4,Math.floor(index/9)+1);return index<18?1:2}
 export function validateHands(notes,mode){const starts=new Map();for(const n of notes){if(n.type==='rest')continue;const key=n.start+':'+handFor(n.note,mode);starts.set(key,(starts.get(key)||0)+1);if(starts.get(key)>5)throw new Error('한 손은 같은 박에 최대 5개 음을 연주할 수 있습니다. 손 모드나 화음을 조정하세요.')}return true}
 export function normalizeSong(d){
