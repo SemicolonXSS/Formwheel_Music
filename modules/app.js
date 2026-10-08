@@ -572,6 +572,7 @@ window.addEventListener("beforeunload",()=>{
 });
 
 /* ===== INIT ===== */
+updateEditorForm();
 buildEditorPiano();
 buildPlayerPiano("playPiano");buildPlayerPiano("gamePiano");
 buildLanes("playLanes");buildLanes("gameLanes");
