@@ -385,6 +385,8 @@ window.stopPlayback=function(){
 };
 
 /* ===== GAME (3-2-1 카운트다운) ===== */
+function configureGameHand(){const song=songsCache[Number($("gameSong").value)];if(!song)return;const previous=$("gameHand").value;$("gameHand").innerHTML='<option value="0">모든 손 함께</option>'+Array.from({length:song.handMode==='one'?1:song.handMode==='four'?4:2},(_,i)=>`<option value="${i+1}">손 ${i+1} 파트</option>`).join('');if([...$("gameHand").options].some(o=>o.value===previous))$("gameHand").value=previous}
+
 function loadGameSongs(){
   const sel=$("gameSong");if(!sel)return;
   sel.innerHTML="";
@@ -392,7 +394,7 @@ function loadGameSongs(){
   songsCache.forEach((s,i)=>{
     const o=document.createElement("option");o.value=i;o.textContent=s.title||`음악 ${i+1}`;sel.appendChild(o);
   });
-  updateLeaderboard();
+  configureGameHand();updateLeaderboard();
 }
 window.startGame=function(){
   stopGame();
@@ -404,7 +406,7 @@ window.startGame=function(){
   game.totalSeconds=maxBeatOf(song)*60/(Number(song.tempo)||120)+2;
   const panel=$("gamePanel");panel.classList.remove("hidden");
   $("gameTitle").textContent=song.title||"Music Game";
-  $("gameHand").innerHTML='<option value="0">모든 손 함께</option>'+Array.from({length:song.handMode==="one"?1:song.handMode==="four"?4:2},(_,i)=>`<option value="${i+1}">손 ${i+1} 파트</option>`).join("");
+  configureGameHand();$("gameHand").disabled=true;
   buildLanes("gameLanes");buildPlayerPiano("gamePiano");
   $("gameNotes").innerHTML="";$("gameProgress").textContent="0%";
   updateGameStats();
@@ -473,6 +475,7 @@ function updateGameStats(){
   $("gameAccuracy").textContent=`${game.judged?Math.round(game.hits/game.judged*100):100}%`;
 }
 window.stopGame=function(){
+  $("gameHand").disabled=false;
   if(uploadedAudio)uploadedAudio.pause();stopAllTones();
   clearInterval(game.countdownTimer);game.countdownTimer=null;game.countdownActive=false;game.startedAt=null;
   removeStageOverlay("gameStage");
@@ -481,6 +484,7 @@ window.stopGame=function(){
   const l=$("gameNotes");if(l)l.innerHTML="";
 };
 function finishGame(){
+  $("gameHand").disabled=false;
   if(!game.active)return;
   game.active=false;
   if(game.raf)cancelAnimationFrame(game.raf);
@@ -526,7 +530,7 @@ document.addEventListener("keydown",e=>{
 async function saveGameScore(){
   if(!firebaseReady||!authReady||!currentUser||!game.song)return;
   try{
-    await saveScore(db,game.song.songId,{uid:currentUser.uid,nickname:'Anonymous',score:game.score,accuracy:Number($("gameAccuracy").textContent.replace('%',''))});
+    await saveScore(db,game.song.songId,{uid:currentUser.uid,nickname:'Anonymous'+(Number($("gameHand").value)?' · 손 '+$("gameHand").value:''),part:Number($("gameHand").value),score:game.score,accuracy:Number($("gameAccuracy").textContent.replace('%',''))});
     updateLeaderboard();
   }catch(err){console.warn("Score save:",err)}
 }
@@ -546,7 +550,7 @@ async function updateLeaderboard(){
     });
   }catch(err){console.warn(err);box.innerHTML=`<div class="empty">리더보드를 불러오지 못했습니다.</div>`}
 }
-$("gameSong").addEventListener("change",updateLeaderboard);
+$("gameSong").addEventListener("change",()=>{stopGame();configureGameHand();updateLeaderboard()});
 
 /* ===== FORM ===== */
 $("songTitle").addEventListener("input",e=>composition.title=e.target.value);
