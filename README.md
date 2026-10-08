@@ -1,6 +1,6 @@
 # Formwheel_Music
 
-음악을 만들고 재생하고 직접 플레이하는 음악 프로젝트.
+한 손·두 손·포 핸드 악보를 만들고 드럼·피아노로 재생하며 리듬을 연주하는 음악 도구.
 
 - 실행: https://semicolonxss.github.io/Formwheel_Music/
 - 프로젝트 목록: https://semicolonxss.github.io/Formwheel/
