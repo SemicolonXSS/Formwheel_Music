@@ -1,0 +1,2 @@
+export function nearestNote(notes,hitNotes,note,beat,range){let target=null,best=Infinity;for(const n of notes){if(n.type==='rest'||hitNotes.has(n.id)||n.note!==note)continue;const diff=Math.abs(Number(n.start)-beat);if(diff<=range&&diff<best){best=diff;target=n}}return{target,best}}
+export function judgment(diff,combo){return{points:(diff<=.07?100:diff<=.15?75:50)+combo*5,text:diff<=.07?'PERFECT!':diff<=.15?'GREAT!':'GOOD!'}}
