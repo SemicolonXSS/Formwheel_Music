@@ -141,7 +141,18 @@
 
 <script type="module" src="./modules/app.js?v=dfcb3dec732a"></script>
 <script type="module" src="https://semicolonxss.github.io/Formwheel/assets/live-presence.js?v=20261017-duration"></script>
-</body>
+<script>
+/* Secol Random 9 - music practice helpers */
+document.addEventListener('DOMContentLoaded',()=>{
+const tempo=document.getElementById('tempo');if(!tempo)return;
+const box=document.createElement('section');box.style.cssText='margin:12px 0;padding:12px;border:1px solid #aaa;border-radius:12px';
+box.innerHTML='<h3>🎼 연습 도구</h3><div style="display:flex;flex-wrap:wrap;gap:8px"><button type="button" id="sr9tempoSlow">🐢 60 BPM</button><button type="button" id="sr9tempoMid">🎶 100 BPM</button><button type="button" id="sr9tempoFast">⚡ 140 BPM</button><button type="button" id="sr9musicPrompt">🎯 작곡 주제</button></div><p role="status" id="sr9musicNote"></p>';
+document.getElementById('create')?.appendChild(box);
+const note=document.getElementById('sr9musicNote');
+for(const [id,v] of [['sr9tempoSlow',60],['sr9tempoMid',100],['sr9tempoFast',140]])document.getElementById(id).onclick=()=>{tempo.value=v;tempo.dispatchEvent(new Event('input',{bubbles:true}));tempo.dispatchEvent(new Event('change',{bubbles:true}));note.textContent=v+' BPM으로 설정했어요'};
+const topics=['비 오는 밤','우주 여행','숨바꼭질','시작 화면 BGM','승리의 팡파르','느긋한 오후','미스터리'];document.getElementById('sr9musicPrompt').onclick=()=>{note.textContent='오늘의 작곡 주제: '+topics[Math.floor(Math.random()*topics.length)]};
+});
+</script></body>
 </html>
 
 
