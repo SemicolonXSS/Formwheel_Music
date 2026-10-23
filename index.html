@@ -152,7 +152,11 @@ const note=document.getElementById('sr9musicNote');
 for(const [id,v] of [['sr9tempoSlow',60],['sr9tempoMid',100],['sr9tempoFast',140]])document.getElementById(id).onclick=()=>{tempo.value=v;tempo.dispatchEvent(new Event('input',{bubbles:true}));tempo.dispatchEvent(new Event('change',{bubbles:true}));note.textContent=v+' BPM으로 설정했어요'};
 const topics=['비 오는 밤','우주 여행','숨바꼭질','시작 화면 BGM','승리의 팡파르','느긋한 오후','미스터리'];document.getElementById('sr9musicPrompt').onclick=()=>{note.textContent='오늘의 작곡 주제: '+topics[Math.floor(Math.random()*topics.length)]};
 });
-</script></body>
+</script>
+<style>#seran-kit{max-width:820px;margin:20px auto;padding:0 16px;font:14px/1.6 system-ui;color:#27334a}#seran-kit details{background:#f8f9ff;border:1px solid #d7ddec;border-radius:14px;padding:14px}#seran-kit summary{cursor:pointer;font-weight:800}#seran-kit button{margin:4px;padding:9px;border:1px solid #b5c0dc;background:white;color:#263145;border-radius:9px;cursor:pointer}#seran-kit button:focus-visible,#seran-kit summary:focus-visible{outline:3px solid #596dca}</style>
+<aside id="seran-kit"><details id="seran-details"><summary>💡 Music 빠른 도움말 · 공유</summary><p id="seran-tip">악기를 선택하고 템포를 바꿔 보세요.</p><button type="button" id="seran-next">🎲 다음 팁</button><button type="button" id="seran-copy">🔗 주소 복사</button><p id="seran-status" role="status" aria-live="polite"></p><small>? 키로 도움말 전환, Esc로 닫기</small></details></aside>
+<script>(()=>{const tips=["악기를 선택하고 템포를 바꿔 보세요.","음악 제작과 재생 화면을 번갈아 살펴보세요.","같은 멜로디도 BPM에 따라 느낌이 달라져요."],root=document.getElementById('seran-kit'),panel=root.querySelector('details'),msg=root.querySelector('#seran-status');let i=0;root.querySelector('#seran-next').onclick=()=>{i=(i+1)%tips.length;root.querySelector('#seran-tip').textContent=tips[i];msg.textContent='팁 '+(i+1)+' / '+tips.length};root.querySelector('#seran-copy').onclick=async()=>{try{await navigator.clipboard.writeText(location.href);msg.textContent='주소 복사 완료!'}catch{msg.textContent='주소창에서 직접 복사해 주세요.'}};document.addEventListener('keydown',e=>{if(e.target?.closest('input,textarea,select,[contenteditable]')||e.altKey||e.ctrlKey||e.metaKey)return;if(e.key==='?')panel.open=!panel.open;else if(e.key==='Escape')panel.open=false})})();</script>
+</body>
 </html>
 
 
