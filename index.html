@@ -17,7 +17,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://semicolonxss.github.io/Formwheel/og-image.png">
 </head>
-<body><div id="fw-battle-entry" style="position:relative;z-index:999;display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:12px;padding:12px;background:#eef2ff;border:2px solid #a4b3ed;border-radius:14px;font-family:system-ui,sans-serif"><b style="color:#25376e">🎮 게임 모드</b><span style="padding:10px;color:#25376e">👤 일반</span><a href="./battle.html" style="display:inline-block;padding:11px 16px;border-radius:10px;background:#445bcc;color:#fff;text-decoration:none;font-weight:800">⚔️ 배틀 모드 →</a></div>
+<body><div id="fw-battle-entry" role="navigation" aria-label="게임 모드" style="position:relative;z-index:999;display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:12px;padding:12px;background:#eef2ff;border:2px solid #a4b3ed;border-radius:14px;font-family:system-ui,sans-serif"><b style="color:#25376e">🎮 게임 모드</b><span style="padding:10px;color:#25376e">👤 일반</span><a href="./battle.html" style="display:inline-block;padding:11px 16px;border-radius:10px;background:#445bcc;color:#fff;text-decoration:none;font-weight:800">⚔️ 배틀 모드 →</a></div>
 <header>
 <a class="logo fw-hub-logo" href="https://semicolonxss.github.io/Formwheel/" aria-label="FormWheel 메인으로 이동"><span class="fw-hub-form">Form</span><span class="fw-hub-icon" aria-hidden="true"></span><span class="fw-hub-wheel">Wheel</span></a>
 <nav>
@@ -43,16 +43,16 @@
 <section id="create" class="screen">
 <button class="secondary back-btn" onclick="showScreen('home')">← 홈</button>
 <div class="panel">
-<div class="panel-title"><h2>🎼 음악 제작</h2></div>
+<div class="panel-title"><h1 class="screen-title">🎼 음악 제작</h1></div>
 <div class="form-grid">
-<div class="field"><label>곡 제목</label><input id="songTitle" value="나의 음악"></div>
-<div class="field"><label>악기</label><select id="instrument"><option value="piano">🎹 피아노</option><option value="violin">🎻 바이올린</option><option value="guitar">🎸 기타</option><option value="drum">🥁 드럼</option></select></div>
-<div class="field"><label>손 모드</label><select id="handMode"><option value="one">한 손</option><option value="two">두 손</option><option value="four">포 핸드</option></select></div>
-<div class="field"><label>BPM</label><input id="tempo" type="number" min="30" max="300" value="120"></div>
+<div class="field"><label for="songTitle">곡 제목</label><input id="songTitle" value="나의 음악"></div>
+<div class="field"><label for="instrument">악기</label><select id="instrument"><option value="piano">🎹 피아노</option><option value="violin">🎻 바이올린</option><option value="guitar">🎸 기타</option><option value="drum">🥁 드럼</option></select></div>
+<div class="field"><label for="handMode">손 모드</label><select id="handMode"><option value="one">한 손</option><option value="two">두 손</option><option value="four">포 핸드</option></select></div>
+<div class="field"><label for="tempo">BPM</label><input id="tempo" type="number" min="30" max="300" value="120"></div>
 </div>
 <div class="form-grid" style="margin-top:12px">
-<div class="field"><label>음표 길이</label><select id="duration"><option value=".5">8분음표</option><option value="1" selected>4분음표</option><option value="1.5">점4분음표</option><option value="2">2분음표</option><option value="4">온음표</option></select></div>
-<div class="field"><label>선택된 음</label><input id="selectedNotes" value="없음" readonly></div>
+<div class="field"><label for="duration">음표 길이</label><select id="duration"><option value=".5">8분음표</option><option value="1" selected>4분음표</option><option value="1.5">점4분음표</option><option value="2">2분음표</option><option value="4">온음표</option></select></div>
+<div class="field"><label for="selectedNotes">선택된 음</label><input id="selectedNotes" value="없음" readonly></div>
 </div>
 </div>
 
@@ -95,7 +95,7 @@
 <section id="library" class="screen">
 <button class="secondary back-btn" onclick="showScreen('home')">← 홈</button>
 <div class="panel">
-<div class="panel-title"><h2>▶️ 음악 재생</h2><button class="secondary" onclick="loadSongs()">🔄 새로고침</button></div>
+<div class="panel-title"><h1 class="screen-title">▶️ 음악 재생</h1><button class="secondary" onclick="loadSongs()">🔄 새로고침</button></div>
 <label style="display:block;margin:12px 0"><input type="checkbox" id="ownSongs"> 내 곡만 보기 (현재 인증 계정)</label><div id="songGrid" class="song-grid"><div class="empty">음악을 불러오는 중...</div></div>
 </div>
 <div id="playbackPanel" class="panel hidden">
@@ -117,10 +117,10 @@
 <section id="game" class="screen">
 <button class="secondary back-btn" onclick="showScreen('home')">← 홈</button>
 <div class="panel">
-<div class="panel-title"><h2>🎮 음악 플레이</h2></div>
+<div class="panel-title"><h1 class="screen-title">🎮 음악 플레이</h1></div>
 <div class="form-grid">
-<div class="field"><label>플레이할 음악</label><select id="gameSong"><option value="">음악을 불러오는 중...</option></select></div>
-<div class="field"><label>판정 난이도</label><select id="judgeRange"><option value=".12">엄격</option><option value=".22" selected>일반</option><option value=".38">쉬움</option></select></div>
+<div class="field"><label for="gameSong">플레이할 음악</label><select id="gameSong"><option value="">음악을 불러오는 중...</option></select></div>
+<div class="field"><label for="judgeRange">판정 난이도</label><select id="judgeRange"><option value=".12">엄격</option><option value=".22" selected>일반</option><option value=".38">쉬움</option></select></div>
 </div>
 <div class="toolbar"><button class="primary" onclick="startGame()">🎮 플레이 시작</button><button class="danger" onclick="stopGame()">⏹ 종료</button></div>
 </div>
@@ -140,7 +140,7 @@
 <div class="panel"><div class="panel-title"><h2>🏆 리더보드</h2></div><div id="leaderboard" class="empty">곡을 선택하면 리더보드가 표시됩니다.</div></div>
 </section>
 
-<details style="max-width:240px;margin:22px auto;text-align:center;font-size:10px;opacity:.48"><summary style="cursor:pointer">♪ ...</summary><span>MUSIC-REST</span></details>
+<details style="max-width:240px;margin:22px auto;text-align:center;font-size:10px;"><summary style="cursor:pointer">♪ ...</summary><span>MUSIC-REST</span></details>
 </main>
 
 <script type="module" src="./modules/app.js?v=dfcb3dec732a"></script>

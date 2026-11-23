@@ -47,7 +47,7 @@ const playback={active:false,raf:null,song:null,startedAt:null,endSeconds:0,sche
 const game={active:false,raf:null,song:null,startedAt:null,countdownActive:false,countdownTimer:null,score:0,combo:0,hits:0,misses:0,judged:0,hitNotes:new Set(),totalSeconds:0};
 
 const mp3Card=document.createElement("section");mp3Card.className="card";mp3Card.style.marginTop="18px";
-mp3Card.innerHTML='<h3>MP3 / 오디오 업로드</h3><p>기기의 오디오 파일을 감상합니다. 서버로 전송되지 않으며 음표 게임용 악보로 자동 변환하지 않습니다. 최대 20MB.</p><input id="mp3Upload" type="file" accept="audio/*,.mp3"><audio id="mp3Player" controls style="display:block;width:100%;margin-top:12px"></audio><button id="mp3Stop">오디오 정지</button><p id="mp3Status" role="status"></p>';
+mp3Card.innerHTML='<h2>MP3 / 오디오 업로드</h2><p>기기의 오디오 파일을 감상합니다. 서버로 전송되지 않으며 음표 게임용 악보로 자동 변환하지 않습니다. 최대 20MB.</p><input id="mp3Upload" aria-label="감상할 오디오 파일" type="file" accept="audio/*,.mp3"><audio id="mp3Player" controls style="display:block;width:100%;margin-top:12px"></audio><button id="mp3Stop">오디오 정지</button><p id="mp3Status" role="status"></p>';
 $("library").append(mp3Card);uploadedAudio=$("mp3Player");
 $("mp3Upload").onchange=event=>{const file=event.target.files[0];if(!file)return;
  if(file.size>20*1024*1024){$("mp3Status").textContent="20MB 이하 파일을 선택해주세요.";return;}
@@ -72,29 +72,30 @@ function buildEditorPiano(){
   const press=(note,el)=>{toggleEditorKey(note,el);playTone(note,.2,$("instrument").value)};
   whites.forEach((note,i)=>{
     pos[note]=i;
-    const k=document.createElement("div");
+    const k=document.createElement("button");k.type="button";k.setAttribute("aria-pressed","false");
     k.className="white-key";k.dataset.note=note;k.innerHTML=`<span>${note}</span>`;
-    k.addEventListener("pointerdown",()=>press(note,k));
+    k.addEventListener("click",()=>press(note,k));
     piano.appendChild(k);
   });
   whites.forEach(note=>{
     const base=note.replace(/\d/g,""),oct=note.slice(-1);
     if(!["C","D","F","G","A"].includes(base))return;
-    const b=document.createElement("div");
+    const b=document.createElement("button");b.type="button";b.setAttribute("aria-pressed","false");
     b.className="black-key";b.dataset.note=base+"#"+oct;b.textContent=b.dataset.note;
     b.style.left=`calc(${((pos[note]+1)/whites.length)*100}% - 14px)`;
-    b.addEventListener("pointerdown",e=>{e.stopPropagation();press(b.dataset.note,b)});
+    b.addEventListener("click",e=>{e.stopPropagation();press(b.dataset.note,b)});
     piano.appendChild(b);
   });
 }
 function toggleEditorKey(note,el){
   if(selectedKeys.has(note)){selectedKeys.delete(note);el.classList.remove("selected")}
   else{selectedKeys.add(note);el.classList.add("selected")}
+  el.setAttribute("aria-pressed",String(selectedKeys.has(note)));
   $("selectedNotes").value=[...selectedKeys].sort((a,b)=>IDX[a]-IDX[b]).join(" + ")||"없음";
 }
 window.clearSelectedKeys=function(){
   selectedKeys.clear();
-  document.querySelectorAll("#editorPiano .selected").forEach(k=>k.classList.remove("selected"));
+  document.querySelectorAll("#editorPiano .selected").forEach(k=>{k.classList.remove("selected");k.setAttribute("aria-pressed","false")});
   $("selectedNotes").value="없음";
 };
 
